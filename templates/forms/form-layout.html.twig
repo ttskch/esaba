@@ -1,0 +1,40 @@
+{% extends 'form_div_layout.html.twig' %}
+
+
+{% block form_row -%}
+    <div class="form-group">
+        {{- form_label(form) -}}
+        {{- form_widget(form, { attr: { class: errors|length ? 'form-control is-invalid': 'form-control' } }) -}}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock form_row %}
+
+
+{% block form_errors -%}
+    {%- for error in errors|default([]) -%}
+        <div class="invalid-feedback">{{ error.message|trans }}</div>
+    {%- endfor -%}
+{%- endblock form_errors %}
+
+
+{% block choice_widget_expanded -%}
+    <div {% with { attr: attr|merge({ class: attr.class|default('') ~ ' form-control form-control-unstyled' }) } %}{{ block('widget_container_attributes') }}{% endwith %}>
+        {%- for child in form %}
+            <div {% with { attr: child.vars.attr|merge({ class: child.vars.attr.class|default('') ~ ' form-check' }) } %}{{ block('attributes') }}{% endwith %}>
+                <label class="form-check-label">
+                    {{- form_widget(child, { attr: { class: 'form-check-input' } }) }}
+                    {{ child.vars.label }}
+                </label>
+            </div>
+        {% endfor -%}
+    </div>
+{% endblock choice_widget_expanded %}
+
+
+{% block form_end -%}
+    {% if not render_rest is defined or render_rest %}
+        {{- form_rest(form) -}}
+    {% endif -%}
+    <button class="btn btn-primary">{{ 'Send'|trans }}</button>
+    </form>
+{%- endblock form_end %}
