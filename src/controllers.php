@@ -19,8 +19,12 @@ $app->get('/post/{id}', function (Request $request, $id) use ($app) {
 
     $force = boolval($request->get('force', 0));
 
-    $post = $app['esa']->getPost($id, $force);
-    $toc = $app['esa']->getToc($post['body_html']);
+    $post = $app['service.esa']->getPost($id, $force);
+    $toc = $app['service.esa']->getToc($post['body_html']);
+
+    if (!$app['service.category_checker']->check($post['category'])) {
+        throw new NotFoundHttpException();
+    }
 
     if ($force) {
         return $app->redirect($app['url_generator']->generate('post', ['id' => $id]));
@@ -29,7 +33,7 @@ $app->get('/post/{id}', function (Request $request, $id) use ($app) {
     return $app['twig']->render('post.html.twig', [
         'post' => $post,
         'toc' => $toc,
-        'team_name' => $app['secret.esa.team_name'],
+        'team_name' => $app['esa.team_name'],
     ]);
 })
 ->assert('id', '\d+')

@@ -12,6 +12,7 @@ use Silex\Provider\TwigServiceProvider;
 use Silex\Provider\ServiceControllerServiceProvider;
 use Silex\Provider\HttpFragmentServiceProvider;
 use Silex\Provider\ValidatorServiceProvider;
+use Ttskch\CategoryChecker;
 use Ttskch\Esa;
 
 $app = new Application();
@@ -41,12 +42,15 @@ $app->extend('translator', function ($translator, $app) {
     return $translator;
 });
 
-$app['esa'] = $app->factory(function () use ($app) {
-    $client = new Client($app['secret.esa.access_token'], $app['secret.esa.team_name']);
+$app['service.esa'] = $app->factory(function () use ($app) {
+    $client = new Client($app['esa.access_token'], $app['esa.team_name']);
     $cache = new ApcuCache();
 
-    return new Esa($client, $cache);
+    return new Esa($app, $client, $cache);
+});
 
+$app['service.category_checker'] = $app->factory(function () use ($app) {
+    return new CategoryChecker($app['esa.public_categories'], $app['esa.private_categories']);
 });
 
 return $app;
