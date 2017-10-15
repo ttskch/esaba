@@ -42,7 +42,7 @@
     {% endblock %}
 </head>
 
-<body>
+<body class="bg-light">
 {% block body %}
     <nav class="navbar navbar-expand-md navbar-light bg-secondary">
         <div class="container">
@@ -60,8 +60,8 @@
             {#</div>#}
         </div>
     </nav>
-    <div class="container">
-        <div id="content" class="my-3 mb-5">
+    <div id="content" class="bg-white">
+        <div class="container py-3 pb-5">
             {% block flashes %}
                 {% if global.session.flashbag.peekAll|length > 0 %}
                     {% for type, messages in global.session.flashbag.all %}
@@ -79,17 +79,17 @@
             {% endblock %}
         </div>
     </div>
-    <footer class="bg-light clearfix py-3">
+    <footer class="clearfix py-3 text-secondary">
         <div class="container">
             {% block footer %}
                 <div class="small">
                     <div class="float-none float-md-left">
-                        Powered by <a href="https://github.com/ttskch/esaba" target="_blank"><i class="fa fa-github"></i> ttskch/esaba</a>
+                        Powered by <a href="https://github.com/ttskch/esaba" class="text-secondary font-weight-bold" target="_blank"><i class="fa fa-github"></i> ttskch/esaba</a>
                     </div>
                     <div class="cc float-none float-md-right">
-                        <a href="https://docs.esa.io/posts/125" target="_blank">Logos of esa.io</a>
+                        <a href="https://docs.esa.io/posts/125" class="text-secondary font-weight-bold" target="_blank">Logos of esa.io</a>
                         are licensed under
-                        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a>
+                        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/" class="text-secondary font-weight-bold" target="_blank">CC BY-NC-ND 4.0</a>
                         <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
                             <img alt="Creative Commons License" style="border:none" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" />
                         </a>

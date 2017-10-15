@@ -82,6 +82,8 @@ $color-hr: rgba(0,0,0,.1);
         }
 
         li {
+            margin: 0.5em 0;
+
             p {
                 margin: 0;
             }
@@ -99,6 +101,21 @@ $color-hr: rgba(0,0,0,.1);
         hr {
             border-width: 3px;
             margin: 3em 0;
+        }
+
+        .footnotes {
+            font-size: 0.8em;
+            padding: 1em;
+            background-color: $color-light;
+
+            hr {
+                display: none;
+            }
+
+            ol {
+                margin-bottom: 0;
+                padding-left: 1.5em;
+            }
         }
     }
 }

@@ -42,16 +42,18 @@
             </div>
         </div>
         <div class="col">
-            <div id="toc-box" class="d-none d-lg-block">
-                <h6>Index</h6>
-                <ul class="small">
-                    {% for id, name in toc %}
-                        <li class="toc-{{ id }}">
-                            <a href="#{{ id }}">{{ name }}</a>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
+            {% if toc|length %}
+                <div id="toc-box" class="d-none d-lg-block">
+                    <h6>Index</h6>
+                    <ul class="small">
+                        {% for id, name in toc %}
+                            <li class="toc-{{ id }}">
+                                <a href="#{{ id }}">{{ name }}</a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
         </div>
     </div>
 {% endblock %}
