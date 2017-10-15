@@ -8,13 +8,13 @@
         {% block title %}{#
             #}{% block subtitle %}{% endblock %}{#
             #}{% if block('subtitle') is not empty %} | {% endif %}{#
-            #}{% block site_title %}My Silex Application{% endblock %}{#
+            #}{% block site_title %}esaba{% endblock %}{#
         #}{% endblock %}
     </title>
     <meta name="description" content="{{ block('subtitle') }}">
     <link rel="canonical" href="{{ global.request.uri }}">
 
-    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{ asset('img/esa/toriatama.png') }}" type="image/x-icon">
 
     <meta property="og:title" content="{{ block('title') }}">
     <meta property="og:type" content="website">
@@ -44,20 +44,23 @@
 
 <body>
 {% block body %}
-    <nav class="navbar navbar-expand-md navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand" href=".">{{ block('site_title') }}</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse-1" aria-label="Toggle navigation">
-                <i class="fa fa-bars"></i>
-            </button>
-            <div class="collapse navbar-collapse" id="navbar-collapse-1">
-                <ul class="navbar-nav">
-                    <li class="nav-item"><a href="" class="nav-link">Something</a></li>
-                </ul>
-            </div>
+    <nav class="navbar navbar-expand-md navbar-light bg-secondary">
+        <div class="container">
+            <a class="navbar-brand text-white" href=".">
+                <img src="{{ asset('img/esa/toriatama.png') }}" alt="esa" class="mr-2" style="height:25px; width:auto;">
+                {{- block('site_title') }}
+            </a>
+            {#<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse-1" aria-label="Toggle navigation">#}
+            {#<i class="fa fa-bars"></i>#}
+            {#</button>#}
+            {#<div class="collapse navbar-collapse" id="navbar-collapse-1">#}
+            {#<ul class="navbar-nav">#}
+            {#<li class="nav-item"><a href="" class="nav-link">Something</a></li>#}
+            {#</ul>#}
+            {#</div>#}
         </div>
     </nav>
-    <div class="container-fluid">
+    <div class="container">
         <div id="content" class="my-3 mb-5">
             {% block flashes %}
                 {% if global.session.flashbag.peekAll|length > 0 %}
@@ -76,6 +79,25 @@
             {% endblock %}
         </div>
     </div>
+    <footer class="bg-light clearfix py-3">
+        <div class="container">
+            {% block footer %}
+                <div class="small">
+                    <div class="float-none float-md-left">
+                        Powered by <a href="https://github.com/ttskch/esaba" target="_blank"><i class="fa fa-github"></i> ttskch/esaba</a>
+                    </div>
+                    <div class="cc float-none float-md-right">
+                        <a href="https://docs.esa.io/posts/125" target="_blank">Logos of esa.io</a>
+                        are licensed under
+                        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">CC BY-NC-ND 4.0</a>
+                        <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+                            <img alt="Creative Commons License" style="border:none" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" />
+                        </a>
+                    </div>
+                </div>
+            {% endblock %}
+        </div>
+    </footer>
 
     <script src="{{ asset('lib/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('lib/popper.js/umd/popper.min.js') }}"></script>
