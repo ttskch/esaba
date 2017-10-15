@@ -21,10 +21,14 @@
                 </div>
 
                 <div class="clearfix">
-                    <h1 class="title">{{ post.name -}}
-                        {%- for tag in post.tags -%}
-                            <span class="tag">#{{ tag }}</span>
-                        {%- endfor -%}
+                    <h1 class="title {% if post.wip %}wip{% endif %}">
+                        <span class="badge badge-pill badge-secondary mr-3 d-none">WIP</span>
+                        {{- post.name -}}
+                        <div class="d-inline ml-2">
+                            {%- for tag in post.tags -%}
+                                <span class="tag ml-2">#{{ tag }}</span>
+                            {%- endfor -%}
+                        </div>
                     </h1>
                 </div>
 

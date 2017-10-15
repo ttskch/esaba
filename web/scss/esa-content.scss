@@ -17,14 +17,19 @@
             font-weight: bold;
             margin: 0.8em 0;
 
+            &.wip {
+                color: $color-muted;
+
+                .badge {
+                    display: inline-block !important;
+                    background-color: rgba($color-secondary, 0.5);
+                }
+            }
+
             .tag {
                 font-size: 1rem;
                 font-weight: normal;
                 color: $color-muted;
-                margin-left: 0.5em;
-                &:first-child {
-                    margin-left: 1em;
-                }
             }
         }
         .updated-at {
