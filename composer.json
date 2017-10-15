@@ -1,7 +1,14 @@
 {
-    "name": "ttskch/silex-skeleton",
-    "description": "A pre-configured skeleton for the Silex microframework",
+    "name": "ttskch/esaba",
+    "description": "Host your markdown docs on esa.io with your own css.",
+    "keywords": ["esa", "esa.io", "markdown", "css", "scss"],
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Takashi Kanemoto",
+            "email": "kanemoto.takashi@gmail.com"
+        }
+    ],
     "type": "project",
     "require": {
         "php": ">=5.5.9",
@@ -30,7 +37,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.0.x-dev"
+            "dev-master": "1.0.x-dev"
         }
     },
     "scripts": {

@@ -1,6 +1,6 @@
 <?php
 
-use Doctrine\Common\Cache\ApcuCache;
+use Doctrine\Common\Cache\FilesystemCache;
 use Polidog\Esa\Client;
 use Silex\Application;
 use Silex\Provider\AssetServiceProvider;
@@ -13,7 +13,8 @@ use Silex\Provider\ServiceControllerServiceProvider;
 use Silex\Provider\HttpFragmentServiceProvider;
 use Silex\Provider\ValidatorServiceProvider;
 use Ttskch\CategoryChecker;
-use Ttskch\Esa;
+use Ttskch\EsaProxy;
+use Ttskch\HtmlHelper;
 
 $app = new Application();
 $app->register(new ServiceControllerServiceProvider());
@@ -44,13 +45,17 @@ $app->extend('translator', function ($translator, $app) {
 
 $app['service.esa'] = $app->factory(function () use ($app) {
     $client = new Client($app['esa.access_token'], $app['esa.team_name']);
-    $cache = new ApcuCache();
+    $cache = new FilesystemCache(__DIR__.'/../var/cache/esa');
 
-    return new Esa($app, $client, $cache);
+    return new EsaProxy($client, $cache);
 });
 
 $app['service.category_checker'] = $app->factory(function () use ($app) {
     return new CategoryChecker($app['esa.public_categories'], $app['esa.private_categories']);
+});
+
+$app['service.html_helper'] = $app->factory(function () use ($app) {
+    return new HtmlHelper($app['esa.html_replacements'], $app['esa.team_name'], $app['url_generator']);
 });
 
 return $app;

@@ -16,11 +16,12 @@ $app->get('/', function () use ($app) {
 
 
 $app->get('/post/{id}', function (Request $request, $id) use ($app) {
-
     $force = boolval($request->get('force', 0));
 
     $post = $app['service.esa']->getPost($id, $force);
-    $toc = $app['service.esa']->getToc($post['body_html']);
+
+    $toc = $app['service.html_helper']->getToc($post['body_html']);
+    $post['body_html'] = $app['service.html_helper']->replace($post['body_html'], 'post', 'id');
 
     if (!$app['service.category_checker']->check($post['category'])) {
         throw new NotFoundHttpException();
@@ -37,7 +38,8 @@ $app->get('/post/{id}', function (Request $request, $id) use ($app) {
     ]);
 })
 ->assert('id', '\d+')
-->bind('post');
+->bind('post')
+;
 
 
 $app->error(function (\Exception $e, Request $request, $code) use ($app) {
