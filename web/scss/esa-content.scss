@@ -1,0 +1,100 @@
+$color-primary: #007bff;
+$color-secondary: #868e96;
+$color-success: #28a745;
+$color-danger: #dc3545;
+$color-warning: #ffc107;
+$color-info: #17a2b8;
+$color-light: #f8f9fa;
+$color-dark: #343a40;
+$color-muted: $color-secondary;
+$color-hr: rgba(0,0,0,.1);
+
+#esa-content {
+
+    #esa-content-header {
+        position: relative;
+
+        .actions {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+        .category {
+            color: $color-muted;
+        }
+        .title {
+            font-weight: bold;
+            margin: 0.8em 0;
+        }
+        .updated-at {
+            color: $color-muted;
+            font-size: 0.8em;
+        }
+    }
+
+    #esa-content-body {
+        .hidden {
+            display: none;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            margin: 1em 0;
+            position: relative;
+
+            i.fa {
+                font-size: 0.7em;
+                position: absolute;
+                left: -1.3em;
+                top: 0;
+                padding: 0.3em; // for click-ability
+                display: none;
+            }
+            &:hover {
+                i.fa {
+                    display: block;
+                }
+            }
+        }
+
+        h1 {
+            padding-bottom: 0.3em;
+            border-bottom: 2px solid $color-hr;
+        }
+        h2 {
+            padding-bottom: 0.3em;
+            border-bottom: 1px solid $color-hr;
+        }
+
+        img {
+            max-width: 100%;
+        }
+    }
+}
+
+#toc-box {
+    border-left: 5px solid $color-secondary;
+    padding: 0.5em 0;
+    padding-left: 1em;
+
+    ul {
+        padding-left: 1.5em;
+        margin-bottom: 0;
+
+        li[class^="toc-"] {
+            &[class$="-0-0"] {  // h1
+            }
+            &:not([class$="-0-0"])[class$="-0"] {  // h2
+                margin-left: 1em;
+            }
+            &:not([class$="-0"]) {  // h3
+                margin-left: 2em;
+            }
+        }
+    }
+}
+
+@media print {
+    #toc-box {
+        display: none;
+    }
+}

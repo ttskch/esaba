@@ -1,0 +1,55 @@
+{% extends "layout.html.twig" %}
+
+{% block content %}
+    <div class="row">
+        <div id="esa-content" class="col-lg-9">
+            <div id="esa-content-header">
+                <div class="actions">
+                    <a href="{{ path('post', { id: post.number, force: 1 }) }}" class="btn btn-sm btn-outline-secondary" data-toggle="tooltip" data-placement="top" title="{{ 'Refresh without cache'|trans }}">
+                        <i class="fa fa-refresh"></i>
+                    </a>
+                    <a href="//{{ team_name }}.esa.io/posts/{{ post.number }}/edit" target="_blank" class="btn btn-sm btn-outline-secondary" data-toggle="tooltip" data-placement="top" title="{{ 'Edit this post'|trans }}">
+                        <i class="fa fa-pencil"></i>
+                    </a>
+                </div>
+
+                <div class="category">
+                    {% for cat in post.category|split('/') %}
+                        <span>{{ cat }}</span>
+                        <span class="divider">/</span>
+                    {% endfor %}
+                </div>
+
+                <h1 class="title">{{ post.name }}</h1>
+
+                <div class="updated-at">
+                    <i class="fa fa-clock-o"></i> Updated at {{ post.updated_at|date('Y/m/d H:i:s') }}
+                </div>
+            </div>
+
+            <hr class="mb-5">
+
+            <div id="esa-content-body">
+                {% autoescape %}
+                    {{ post.body_html|raw }}
+                {% endautoescape %}
+            </div>
+        </div>
+        <div class="col">
+            <div id="toc-box" class="d-none d-lg-block">
+                <h6>Index</h6>
+                <ul class="small">
+                    {% for id, name in toc %}
+                        <li class="toc-{{ id }}">
+                            <a href="#{{ id }}">{{ name }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block style_sheets %}
+    <link href="{{ asset('css/esa-content.css') }}" rel="stylesheet">
+{% endblock %}

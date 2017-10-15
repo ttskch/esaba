@@ -21,7 +21,9 @@
         "symfony/security": "~2.8|^3.0",
         "symfony/translation": "~2.8|^3.0",
         "symfony/twig-bridge": "~2.8|^3.0",
-        "symfony/validator": "~2.8|^3.0"
+        "symfony/validator": "~2.8|^3.0",
+        "polidog/esa-php": "^0.0.2",
+        "doctrine/cache": "^1.7"
     },
     "autoload": {
         "psr-4": { "Ttskch\\": "src/services" }

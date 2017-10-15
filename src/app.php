@@ -1,5 +1,7 @@
 <?php
 
+use Doctrine\Common\Cache\ApcuCache;
+use Polidog\Esa\Client;
 use Silex\Application;
 use Silex\Provider\AssetServiceProvider;
 use Silex\Provider\FormServiceProvider;
@@ -10,6 +12,7 @@ use Silex\Provider\TwigServiceProvider;
 use Silex\Provider\ServiceControllerServiceProvider;
 use Silex\Provider\HttpFragmentServiceProvider;
 use Silex\Provider\ValidatorServiceProvider;
+use Ttskch\Esa;
 
 $app = new Application();
 $app->register(new ServiceControllerServiceProvider());
@@ -36,6 +39,14 @@ $app->extend('translator', function ($translator, $app) {
     $translator->addResource('xliff', __DIR__.'/../vendor/symfony/validator/Resources/translations/validators.ja.xlf', 'ja');
 
     return $translator;
+});
+
+$app['esa'] = $app->factory(function () use ($app) {
+    $client = new Client($app['secret.esa.access_token'], $app['secret.esa.team_name']);
+    $cache = new ApcuCache();
+
+    return new Esa($client, $cache);
+
 });
 
 return $app;

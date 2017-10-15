@@ -5,11 +5,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <title>
-        {% block title %}{#
-            #}{% block subtitle %}{% endblock %}{#
-            #}{% if block('subtitle') is not empty %} | {% endif %}{#
-            #}{% block site_title %}esaba{% endblock %}{#
-        #}{% endblock %}
+        {%- block title %}
+            {%- block subtitle %}{% endblock -%}
+            {%- if block('subtitle') is not empty %} | {% endif -%}
+            {%- block site_title %}esaba{% endblock -%}
+        {% endblock -%}
     </title>
     <meta name="description" content="{{ block('subtitle') }}">
     <link rel="canonical" href="{{ global.request.uri }}">
@@ -46,7 +46,7 @@
 {% block body %}
     <nav class="navbar navbar-expand-md navbar-light bg-secondary">
         <div class="container">
-            <a class="navbar-brand text-white" href=".">
+            <a class="navbar-brand text-white" href="{{ path('homepage') }}">
                 <img src="{{ asset('img/esa/toriatama.png') }}" alt="esa" class="mr-2" style="height:25px; width:auto;">
                 {{- block('site_title') }}
             </a>
