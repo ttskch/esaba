@@ -1,6 +1,6 @@
 # esaba
 
-Host your markdown docs on esa.io with your own css.
+Host your markdown docs on [esa.io]() with your own css.
 
 ## Requirements
 
@@ -25,7 +25,7 @@ $ vi config/config.secret.php   # tailor to your env
 $ COMPOSER_PROCESS_TIMEOUT=0 composer run
 ```
 
-And go to http://localhost:8888/index_dev.php
+And go to http://localhost:8888/index_dev.php/post/:post_number
 
 ### Configuration
 
