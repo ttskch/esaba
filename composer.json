@@ -47,6 +47,9 @@
         ],
         "post-install-cmd": [
             "npm install"
+        ],
+        "post-create-project-cmd": [
+            "npm install"
         ]
     }
 }

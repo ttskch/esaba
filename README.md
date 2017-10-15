@@ -11,7 +11,7 @@ Host your markdown docs on [esa.io]() with your own css.
 ## Installation
 
 ```bash
-$ composer create-project ttskch/esaba
+$ composer create-project ttskch/esaba:@dev
 $ cd esaba
 $ cp config/config.secret.php{.placeholder,}
 $ vi config/config.secret.php   # tailor to your env
