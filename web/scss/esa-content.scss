@@ -43,12 +43,14 @@ $color-hr: rgba(0,0,0,.1);
     }
 
     #esa-content-body {
+        line-height: 1.8;
+
         .hidden {
             display: none;
         }
 
         h1, h2, h3, h4, h5, h6 {
-            margin: 1em 0;
+            margin: 0.8em 0;
             position: relative;
 
             i.fa {
@@ -77,6 +79,26 @@ $color-hr: rgba(0,0,0,.1);
 
         img {
             max-width: 100%;
+        }
+
+        li {
+            p {
+                margin: 0;
+            }
+
+            &.task-list-item {
+                list-style: none;
+                margin-left: -1.3em;
+
+                input {
+                    margin-right: 0.5em;
+                }
+            }
+        }
+
+        hr {
+            border-width: 3px;
+            margin: 3em 0;
         }
     }
 }
