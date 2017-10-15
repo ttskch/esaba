@@ -25,6 +25,16 @@ $color-hr: rgba(0,0,0,.1);
         .title {
             font-weight: bold;
             margin: 0.8em 0;
+
+            .tag {
+                font-size: 1rem;
+                font-weight: normal;
+                color: $color-muted;
+                margin-left: 0.5em;
+                &:first-child {
+                    margin-left: 1em;
+                }
+            }
         }
         .updated-at {
             color: $color-muted;

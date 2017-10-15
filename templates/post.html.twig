@@ -20,7 +20,13 @@
                     {% endfor %}
                 </div>
 
-                <h1 class="title">{{ post.name }}</h1>
+                <div class="clearfix">
+                    <h1 class="title">{{ post.name -}}
+                        {%- for tag in post.tags -%}
+                            <span class="tag">#{{ tag }}</span>
+                        {%- endfor -%}
+                    </h1>
+                </div>
 
                 <div class="updated-at">
                     <i class="fa fa-clock-o"></i> Updated at {{ post.updated_at|date('Y/m/d H:i:s') }}
