@@ -34,7 +34,6 @@ $app->get('/post/{id}', function (Request $request, $id) use ($app) {
     return $app['twig']->render('post.html.twig', [
         'post' => $post,
         'toc' => $toc,
-        'team_name' => $app['esa.team_name'],
     ]);
 })
 ->assert('id', '\d+')

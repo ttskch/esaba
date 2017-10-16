@@ -13,6 +13,7 @@ use Silex\Provider\ServiceControllerServiceProvider;
 use Silex\Provider\HttpFragmentServiceProvider;
 use Silex\Provider\ValidatorServiceProvider;
 use Ttskch\CategoryChecker;
+use Ttskch\EmojiClient;
 use Ttskch\EsaProxy;
 use Ttskch\HtmlHelper;
 
@@ -43,9 +44,15 @@ $app->extend('translator', function ($translator, $app) {
     return $translator;
 });
 
+// original services
+
+$app['service.doctrine_cache'] = $app->factory(function () use ($app) {
+    return new FilesystemCache(__DIR__.'/../var/cache/esa');
+});
+
 $app['service.esa'] = $app->factory(function () use ($app) {
     $client = new Client($app['esa.access_token'], $app['esa.team_name']);
-    $cache = new FilesystemCache(__DIR__.'/../var/cache/esa');
+    $cache = $app['service.doctrine_cache'];
 
     return new EsaProxy($client, $cache);
 });
@@ -55,7 +62,11 @@ $app['service.category_checker'] = $app->factory(function () use ($app) {
 });
 
 $app['service.html_helper'] = $app->factory(function () use ($app) {
-    return new HtmlHelper($app['esa.html_replacements'], $app['esa.team_name'], $app['url_generator']);
+    return new HtmlHelper($app['esa.html_replacements'], $app['esa.team_name'], $app['url_generator'], $app['service.emoji_client']);
+});
+
+$app['service.emoji_client'] = $app->factory(function () use ($app) {
+    return new EmojiClient($app['esa.access_token'], $app['esa.team_name'], $app['service.doctrine_cache']);
 });
 
 return $app;

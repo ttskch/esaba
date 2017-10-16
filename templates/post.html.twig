@@ -1,5 +1,9 @@
 {% extends "layout.html.twig" %}
 
+{% block subtitle %}{{ post.name }}{% endblock %}
+
+{% block navbar_brand_url %}{{ path('post', { id: post.number }) }}{% endblock %}
+
 {% block content %}
     <div class="row">
         <div id="esa-content" class="col-lg-9">
@@ -8,7 +12,7 @@
                     <a href="{{ path('post', { id: post.number, force: 1 }) }}" class="btn btn-sm btn-outline-secondary" data-toggle="tooltip" data-placement="top" title="{{ 'Refresh without cache'|trans }}">
                         <i class="fa fa-refresh"></i>
                     </a>
-                    <a href="//{{ team_name }}.esa.io/posts/{{ post.number }}/edit" target="_blank" class="btn btn-sm btn-outline-secondary" data-toggle="tooltip" data-placement="top" title="{{ 'Edit this post'|trans }}">
+                    <a href="{{ post.url }}/edit" target="_blank" class="btn btn-sm btn-outline-secondary" data-toggle="tooltip" data-placement="top" title="{{ 'Edit this post'|trans }}">
                         <i class="fa fa-pencil"></i>
                     </a>
                 </div>

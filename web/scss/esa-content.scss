@@ -75,6 +75,13 @@
 
         img {
             max-width: 100%;
+            vertical-align: text-bottom;
+
+            &.emoji {
+                border: none;
+                height: 1.3rem;
+                width: auto;
+            }
         }
 
         li {

@@ -1,5 +1,10 @@
 @import "_variables";
 
+html {
+    // base font-size
+    font-size: 15px;
+}
+
 #content {
     min-height: 80vh;
 }
