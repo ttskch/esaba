@@ -8,8 +8,7 @@ Host your markdown docs on [esa.io]() with your own css.
 
 | on esa.io | on esaba (with default css) |
 | --- | --- |
-| ![image](https://user-images.githubusercontent.com/4360663/31591393-2a4d6726-b25a-11e7-8959-d386a8085fc1.png) | ![image](https://user-images.githubusercontent.com/4360663/31598235-727b3c58-b287-11e7-92ec-170972d68469.png)
- |
+| ![image](https://user-images.githubusercontent.com/4360663/31591393-2a4d6726-b25a-11e7-8959-d386a8085fc1.png) | ![image](https://user-images.githubusercontent.com/4360663/31598235-727b3c58-b287-11e7-92ec-170972d68469.png) |
 
 ## Requirements
 
