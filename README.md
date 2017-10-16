@@ -1,5 +1,9 @@
 # esaba
 
+[![Latest Stable Version](https://poser.pugx.org/ttskch/esaba/v/stable?format=flat-square)](https://packagist.org/packages/ttskch/esaba)
+[![Latest Unstable Version](https://poser.pugx.org/ttskch/esaba/v/unstable?format=flat-square)](https://packagist.org/packages/ttskch/esaba)
+[![Total Downloads](https://poser.pugx.org/ttskch/esaba/downloads?format=flat-square)](https://packagist.org/packages/ttskch/esaba)
+
 Host your markdown docs on [esa.io]() with your own css.
 
 | on esa.io | on esaba (with default css) |
