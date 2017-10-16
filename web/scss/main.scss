@@ -5,6 +5,11 @@ html {
     font-size: 15px;
 }
 
+body {
+    // base text color
+    color: $color-text;
+}
+
 #content {
     min-height: 80vh;
 }

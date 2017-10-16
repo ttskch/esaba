@@ -21,6 +21,9 @@
                 color: $color-muted;
 
                 .badge {
+                    font-size: 0.5em;
+                    position: relative;
+                    top: -0.4em;
                     display: inline-block !important;
                     background-color: rgba($color-secondary, 0.5);
                 }
@@ -48,6 +51,7 @@
         h1, h2, h3, h4, h5, h6 {
             margin: 0.8em 0;
             position: relative;
+            line-height: 1.4;
 
             i.fa {
                 font-size: 0.7em;
@@ -73,13 +77,17 @@
             border-bottom: 1px solid $color-hr;
         }
 
+        p, ul, ol, img, table, blockquote {
+            margin-bottom: 1.2em;
+        }
+
         img {
             max-width: 100%;
             vertical-align: text-bottom;
 
             &.emoji {
                 border: none;
-                height: 1.3rem;
+                height: 1.1rem;
                 width: auto;
             }
         }
@@ -106,6 +114,52 @@
             margin: 3em 0;
         }
 
+        code {
+            color: $color-text;
+        }
+
+        .code-block {
+            $border-radius: 3px;
+
+            .code-filename {
+                color: $color-muted;
+                background-color: $color-light;
+                font-size: 0.9em;
+                display: inline-block;
+                margin-bottom: -0.2em;
+                padding: 0.1em 0.5em;
+                border-radius: $border-radius;
+                border-bottom-left-radius: 0;
+                border-bottom-right-radius: 0;
+
+                i.fa {
+                    margin-right: 0.2em;
+                }
+
+                & + pre code {
+                    border-top-left-radius: 0;
+                }
+            }
+            pre {
+                code {
+                    display: block;
+                    background-color: $color-light;
+                    padding: 0.5em 1em;
+                    border-radius: $border-radius;
+                }
+            }
+        }
+
+        blockquote {
+            color: $color-muted;
+            border-left: 4px solid rgba($color-secondary, 0.5);
+            padding-left: 1em;
+
+            p:last-child {
+                margin-bottom: 0;
+            }
+        }
+
         .footnotes {
             font-size: 0.8em;
             padding: 1em;
@@ -124,22 +178,30 @@
 }
 
 #toc-box {
-    border-left: 5px solid $color-secondary;
+    border-left: 4px solid $color-secondary;
     padding: 0.5em 0;
     padding-left: 1em;
+
+    h6 {
+        margin-bottom: 1em;
+    }
 
     ul {
         padding-left: 1.5em;
         margin-bottom: 0;
 
-        li[class^="toc-"] {
-            &[class$="-0-0"] {  // h1
-            }
-            &:not([class$="-0-0"])[class$="-0"] {  // h2
-                margin-left: 1em;
-            }
-            &:not([class$="-0"]) {  // h3
-                margin-left: 2em;
+        li {
+            margin: 0.5em 0;
+
+            &[class^="toc-"] {
+                &[class$="-0-0"] {  // h1
+                }
+                &:not([class$="-0-0"])[class$="-0"] {  // h2
+                    margin-left: 1em;
+                }
+                &:not([class$="-0"]) {  // h3
+                    margin-left: 2em;
+                }
             }
         }
     }
