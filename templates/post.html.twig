@@ -1,6 +1,6 @@
 {% extends "layout.html.twig" %}
 
-{% block subtitle %}{{ post.name }}{% endblock %}
+{% block subtitle %}{{ post.full_name }}{% endblock %}
 
 {% block navbar_brand_url %}{{ path('post', { id: post.number }) }}{% endblock %}
 
