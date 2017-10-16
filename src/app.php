@@ -62,11 +62,7 @@ $app['service.category_checker'] = $app->factory(function () use ($app) {
 });
 
 $app['service.html_helper'] = $app->factory(function () use ($app) {
-    return new HtmlHelper($app['esa.html_replacements'], $app['esa.team_name'], $app['url_generator'], $app['service.emoji_client']);
-});
-
-$app['service.emoji_client'] = $app->factory(function () use ($app) {
-    return new EmojiClient($app['esa.access_token'], $app['esa.team_name'], $app['service.doctrine_cache']);
+    return new HtmlHelper($app['esa.html_replacements'], $app['esa.team_name'], $app['url_generator'], $app['service.esa']);
 });
 
 return $app;

@@ -22,19 +22,19 @@ class HtmlHelper
     private $urlGenerator;
 
     /**
-     * @var EmojiClient
+     * @var EsaProxy
      */
-    private $emojiClient;
+    private $esa;
 
     /**
      * @param array $replacements
      */
-    public function __construct(array $replacements, $teamName, UrlGeneratorInterface $urlGenerator, EmojiClient $emojiClient)
+    public function __construct(array $replacements, $teamName, UrlGeneratorInterface $urlGenerator, EsaProxy $esa)
     {
         $this->replacements = $replacements;
         $this->teamName = $teamName;
         $this->urlGenerator = $urlGenerator;
-        $this->emojiClient = $emojiClient;
+        $this->esa = $esa;
     }
 
     /**
@@ -76,7 +76,7 @@ class HtmlHelper
     {
         $replacements = [];
 
-        $table = $this->emojiClient->getEmojiTable();
+        $table = $this->esa->getEmojiTable();
 
         foreach ($table as $code => $url) {
             $replacements[sprintf('/:%s:/', $code)] = sprintf('<img src="%s" title=":%s:" alt=":%s:" class="emoji">', $url, $code, $code);

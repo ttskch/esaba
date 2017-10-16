@@ -47,4 +47,31 @@ class EsaProxy
 
         return $post;
     }
+
+    /**
+     * @return array
+     */
+    public function getEmojiTable()
+    {
+        $cacheKey = sprintf('%s.emojis', self::CACHE_KEY_PREFIX);
+
+        if ($table = $this->cache->fetch($cacheKey)) {
+            return $table;
+        }
+
+        $table = [];
+
+        $emojis = $this->client->emojis(['include' => 'all'])['emojis'];
+
+        foreach ($emojis as $emoji) {
+            $table[$emoji['code']] = $emoji['url'];
+            foreach ($emoji['aliases'] as $alias) {
+                $table[$alias] = $emoji['url'];
+            }
+        }
+
+        $this->cache->save($cacheKey, $table);
+
+        return $table;
+    }
 }
