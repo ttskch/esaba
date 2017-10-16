@@ -8,7 +8,11 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 //Request::setTrustedProxies(array('127.0.0.1'));
 
-$app->get('/', function () use ($app) {
+$app->get('/', function (Request $request) use ($app) {
+    if ($postId = $request->get('post_id', null)) {
+        return $app->redirect($app['url_generator']->generate('post', ['id' => $postId]));
+    }
+
     return $app['twig']->render('index.html.twig');
 })
 ->bind('homepage')
