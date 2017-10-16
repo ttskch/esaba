@@ -13,7 +13,6 @@ use Silex\Provider\ServiceControllerServiceProvider;
 use Silex\Provider\HttpFragmentServiceProvider;
 use Silex\Provider\ValidatorServiceProvider;
 use Ttskch\CategoryChecker;
-use Ttskch\EmojiClient;
 use Ttskch\EsaProxy;
 use Ttskch\HtmlHelper;
 
