@@ -11,12 +11,13 @@ class controllersTest extends WebTestCase
         $crawler = $client->request('GET', '/');
 
         $this->assertTrue($client->getResponse()->isOk());
-        $this->assertContains('Welcome', $crawler->filter('body')->text());
+        $this->assertContains('esaba', $crawler->filter('h1')->text());
     }
 
     public function createApplication()
     {
         $app = require __DIR__.'/../src/app.php';
+        require __DIR__.'/../config/config.php';
         require __DIR__.'/../config/dev.php';
         require __DIR__.'/../src/controllers.php';
         $app['session.test'] = true;

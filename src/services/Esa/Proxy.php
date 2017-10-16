@@ -1,14 +1,14 @@
 <?php
 
-namespace Ttskch;
+namespace Ttskch\Esa;
 
 use Doctrine\Common\Cache\Cache;
-use Polidog\Esa\Client as EsaClient;
+use Polidog\Esa\Client;
 
-class EsaProxy
+class Proxy
 {
     /**
-     * @var EsaClient
+     * @var Client
      */
     private $client;
 
@@ -17,22 +17,22 @@ class EsaProxy
      */
     private $cache;
 
-    const CACHE_KEY_PREFIX = 'ttskch-esa';
+    const CACHE_KEY_PREFIX = 'ttskch.esa.proxy.';
 
     /**
-     * @param EsaClient $client
+     * @param Client $client
      * @param Cache $cache
      */
-    public function __construct(EsaClient $client, Cache $cache)
+    public function __construct(Client $client, Cache $cache)
     {
         $this->client = $client;
         $this->cache = $cache;
     }
 
     /**
-     * @param $postId
+     * @param int $postId
      * @param bool $force
-     * @return mixed
+     * @return array
      */
     public function getPost($postId, $force = false)
     {
@@ -51,27 +51,17 @@ class EsaProxy
     /**
      * @return array
      */
-    public function getEmojiTable()
+    public function getEmojis()
     {
         $cacheKey = sprintf('%s.emojis', self::CACHE_KEY_PREFIX);
 
-        if ($table = $this->cache->fetch($cacheKey)) {
-            return $table;
+        if ($emojis = $this->cache->fetch($cacheKey)) {
+            return $emojis;
         }
-
-        $table = [];
 
         $emojis = $this->client->emojis(['include' => 'all'])['emojis'];
+        $this->cache->save($cacheKey, $emojis);
 
-        foreach ($emojis as $emoji) {
-            $table[$emoji['code']] = $emoji['url'];
-            foreach ($emoji['aliases'] as $alias) {
-                $table[$alias] = $emoji['url'];
-            }
-        }
-
-        $this->cache->save($cacheKey, $table);
-
-        return $table;
+        return $emojis;
     }
 }

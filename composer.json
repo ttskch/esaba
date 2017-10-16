@@ -31,10 +31,17 @@
         "symfony/validator": "~2.8|^3.0",
         "polidog/esa-php": "^0.0.3",
         "doctrine/cache": "^1.6",
-        "twig/twig": "^1.35"
+        "twig/twig": "^1.35",
+        "symfony/dom-crawler": "^3.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^5.7"
     },
     "autoload": {
         "psr-4": { "Ttskch\\": "src/services" }
+    },
+    "autoload-dev": {
+        "psr-4": { "Ttskch\\": "tests/services" }
     },
     "extra": {
         "branch-alias": {
@@ -45,6 +52,12 @@
         "run": [
             "echo 'Started web server on http://localhost:8888'",
             "php -S localhost:8888 -t web"
+        ],
+        "test": [
+            "./vendor/bin/phpunit"
+        ],
+        "coverage": [
+            "./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage"
         ],
         "post-install-cmd": [
             "npm install"

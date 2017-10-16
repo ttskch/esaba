@@ -54,9 +54,9 @@
                 <div id="toc-box" class="d-none d-lg-block">
                     <h6>Index</h6>
                     <ul class="small">
-                        {% for id, name in toc %}
-                            <li class="toc-{{ id }}">
-                                <a href="#{{ id }}">{{ name }}</a>
+                        {% for h in toc %}
+                            <li class="toc-{{ h.id }}">
+                                <a href="#{{ h.id }}">{{ h.text }}</a>
                             </li>
                         {% endfor %}
                     </ul>

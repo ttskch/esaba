@@ -2,15 +2,29 @@
 require __DIR__.'/config.secret.php';
 require __DIR__.'/config.translations.ja.php';
 
-$app['esa.public_categories'] = [
-     // empty to publish all
+$app['esa.public'] = [
+    'categories' => [
+        // category names to be published.
+        // empty to publish all.
+    ],
+    'tags' => [
+        // tag names to be published.
+        // empty to publish all.
+    ],
 ];
 
-$app['esa.private_categories'] = [
-     // overwrite public_categories config
+$app['esa.private'] = [
+    'categories' => [
+        // category names to be unpublished.
+        // this overwrites esa.public.categories config.
+    ],
+    'tags' => [
+        // tag names to be unpublished.
+        // this overwrites esa.public.tags config.
+    ],
 ];
 
 $app['esa.html_replacements'] = [
     // '/regex pattern/' => 'replacement',
-    '/target\s*=\s*(\'|")_blank\1/' => '',
+    '/target=(\'|")_blank\1/' => '',
 ];

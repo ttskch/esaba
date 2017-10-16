@@ -12,9 +12,11 @@ use Silex\Provider\TwigServiceProvider;
 use Silex\Provider\ServiceControllerServiceProvider;
 use Silex\Provider\HttpFragmentServiceProvider;
 use Silex\Provider\ValidatorServiceProvider;
-use Ttskch\CategoryChecker;
-use Ttskch\EsaProxy;
-use Ttskch\HtmlHelper;
+use Symfony\Component\DomCrawler\Crawler;
+use Ttskch\AccessRestrictor;
+use Ttskch\Esa\EmojiManager;
+use Ttskch\Esa\Proxy;
+use Ttskch\Esa\HtmlHandler;
 
 $app = new Application();
 $app->register(new ServiceControllerServiceProvider());
@@ -45,23 +47,25 @@ $app->extend('translator', function ($translator, $app) {
 
 // original services
 
-$app['service.doctrine_cache'] = $app->factory(function () use ($app) {
-    return new FilesystemCache(__DIR__.'/../var/cache/esa');
-});
-
-$app['service.esa'] = $app->factory(function () use ($app) {
+$app['service.esa.proxy'] = $app->factory(function () use ($app) {
     $client = new Client($app['esa.access_token'], $app['esa.team_name']);
-    $cache = $app['service.doctrine_cache'];
+    $cache = new FilesystemCache(__DIR__.'/../var/cache/esa');
 
-    return new EsaProxy($client, $cache);
+    return new Proxy($client, $cache);
 });
 
-$app['service.category_checker'] = $app->factory(function () use ($app) {
-    return new CategoryChecker($app['esa.public_categories'], $app['esa.private_categories']);
+$app['service.esa.html_handler'] = $app->factory(function () use ($app) {
+    $crawler = new Crawler();
+
+    return new HtmlHandler($crawler, $app['url_generator'], $app['service.esa.emoji_manager'], $app['esa.team_name']);
 });
 
-$app['service.html_helper'] = $app->factory(function () use ($app) {
-    return new HtmlHelper($app['esa.html_replacements'], $app['esa.team_name'], $app['url_generator'], $app['service.esa']);
+$app['service.esa.emoji_manager'] = $app->factory(function () use ($app) {
+    return new EmojiManager($app['service.esa.proxy']);
+});
+
+$app['service.access_restrictor'] = $app->factory(function () use ($app) {
+    return new AccessRestrictor($app['esa.public']['categories'], $app['esa.public']['tags'], $app['esa.private']['categories'], $app['esa.private']['tags']);
 });
 
 return $app;

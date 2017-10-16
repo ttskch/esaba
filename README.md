@@ -1,8 +1,11 @@
 # esaba
 
-[![Latest Stable Version](https://poser.pugx.org/ttskch/esaba/v/stable?format=flat-square)](https://packagist.org/packages/ttskch/esaba)
-[![Latest Unstable Version](https://poser.pugx.org/ttskch/esaba/v/unstable?format=flat-square)](https://packagist.org/packages/ttskch/esaba)
-[![Total Downloads](https://poser.pugx.org/ttskch/esaba/downloads?format=flat-square)](https://packagist.org/packages/ttskch/esaba)
+[![Latest Stable Version](https://poser.pugx.org/ttskch/esaba/v/stable)](https://packagist.org/packages/ttskch/esaba)
+[![Latest Unstable Version](https://poser.pugx.org/ttskch/esaba/v/unstable)](https://packagist.org/packages/ttskch/esaba)
+[![Total Downloads](https://poser.pugx.org/ttskch/esaba/downloads)](https://packagist.org/packages/ttskch/esaba)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ttskch/esaba/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ttskch/esaba/)
+[![Code Coverage](https://scrutinizer-ci.com/g/ttskch/esaba/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/ttskch/esaba/)
+
 
 Host your markdown docs on [esa.io]() with your own css.
 
@@ -12,8 +15,8 @@ Host your markdown docs on [esa.io]() with your own css.
 
 ## Requirements
 
-- PHP 5.5.9+
-- [composer](https://getcomposer.org/)
+- PHP 5.6+
+- [Composer](https://getcomposer.org/)
 - [npm](https://www.npmjs.com/)
 
 ## Installation
@@ -60,7 +63,7 @@ You can fix content html of post before rendering with arbitrary replacements. F
 
 $app['esa.html_replacements'] = [
     // '/regex pattern/' => 'replacement',
-    '/target\s*=\s*(\'|")_blank\1/' => '',
+    '/target=(\'|")_blank\1/' => '',
 ];
 ```
 

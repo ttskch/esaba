@@ -15,9 +15,16 @@
 
     <testsuites>
         <testsuite name="Test Suite">
-            <directory>src/</directory>
             <directory>tests/</directory>
         </testsuite>
     </testsuites>
+
+    <filter>
+        <whitelist processUncoveredFilesFromWhitelist="true">
+            <directory suffix=".php">src/services</directory>
+            <file>src/app.php</file>
+            <file>src/controllers.php</file>
+        </whitelist>
+    </filter>
 
 </phpunit>

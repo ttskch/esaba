@@ -5,10 +5,14 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Ttskch\AccessRestrictor;
+use Ttskch\Esa\HtmlHandler;
+use Ttskch\Esa\Proxy;
 
 //Request::setTrustedProxies(array('127.0.0.1'));
 
 $app->get('/', function (Request $request) use ($app) {
+
     if ($postId = $request->get('post_id', null)) {
         return $app->redirect($app['url_generator']->generate('post', ['id' => $postId]));
     }
@@ -20,16 +24,28 @@ $app->get('/', function (Request $request) use ($app) {
 
 
 $app->get('/post/{id}', function (Request $request, $id) use ($app) {
+
+    $esa = $app['service.esa.proxy'];                   /** @var Proxy $esa */
+    $restrictor = $app['service.access_restrictor'];    /** @var AccessRestrictor $restrictor */
+    $htmlHandler = $app['service.esa.html_handler'];    /** @var HtmlHandler $htmlHandler */
+
     $force = boolval($request->get('force', 0));
 
-    $post = $app['service.esa']->getPost($id, $force);
+    $post = $esa->getPost($id, $force);
 
-    $toc = $app['service.html_helper']->getToc($post['body_html']);
-    $post['body_html'] = $app['service.html_helper']->replace($post['body_html'], 'post', 'id');
-
-    if (!$app['service.category_checker']->check($post['category'])) {
+    if (!$restrictor->isPublic($post['category'], $post['tags'])) {
         throw new NotFoundHttpException();
     }
+
+    // fix boxy_html
+    $htmlHandler->initialize($post['body_html']);
+    $htmlHandler->replacePostUrls('post', 'id');
+    $htmlHandler->disableMentionLinks();
+    $htmlHandler->replaceEmojiCodes();
+    $htmlHandler->replaceHtml($app['esa.html_replacements']);
+    $post['body_html'] = $htmlHandler->dumpHtml();
+
+    $toc = $htmlHandler->getToc();
 
     if ($force) {
         return $app->redirect($app['url_generator']->generate('post', ['id' => $id]));
@@ -46,6 +62,7 @@ $app->get('/post/{id}', function (Request $request, $id) use ($app) {
 
 
 $app->error(function (\Exception $e, Request $request, $code) use ($app) {
+
     if ($app['debug']) {
         return;
     }
