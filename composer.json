@@ -30,7 +30,8 @@
         "symfony/twig-bridge": "~2.8|^3.0",
         "symfony/validator": "~2.8|^3.0",
         "polidog/esa-php": "^0.0.2",
-        "doctrine/cache": "^1.7"
+        "doctrine/cache": "^1.6",
+        "twig/twig": "^1.35"
     },
     "autoload": {
         "psr-4": { "Ttskch\\": "src/services" }
