@@ -42,7 +42,7 @@ class HtmlHandlerTest extends TestCase
     }
 
     /**
-     * @dataProvider testUninitializedExceptionDataProvider
+     * @dataProvider uninitializedExceptionDataProvider
      */
     public function testUninitializedException($method, ...$args)
     {
@@ -53,7 +53,7 @@ class HtmlHandlerTest extends TestCase
         $this->SUT->$method(@$args[0], @$args[1]);
     }
 
-    public function testUninitializedExceptionDataProvider()
+    public function uninitializedExceptionDataProvider()
     {
         return [
             ['dumpHtml'],
@@ -148,7 +148,7 @@ class HtmlHandlerTest extends TestCase
     }
 
     /**
-     * @dataProvider testGetATagReducerDataProvider
+     * @dataProvider getATagReducerDataProvider
      */
     public function testGetATagReducer($subject, $expect)
     {
@@ -163,7 +163,7 @@ class HtmlHandlerTest extends TestCase
         $this->assertEquals($expect, $result);
     }
 
-    public function testGetATagReducerDataProvider()
+    public function getATagReducerDataProvider()
     {
         return [
             ['https://team_name.esa.io/posts/123/edit/', true],

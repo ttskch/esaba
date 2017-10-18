@@ -41,102 +41,53 @@ class AccessRestrictor
     {
         $isPublic = false;
 
-        // publish if no public categories are specified.
-        if (empty($this->publicCategories)) {
+        if (
+            empty($this->publicCategories) ||
+            $this->categoryIsUnderOneOf($category, $this->publicCategories) ||
+            empty($this->publicTags) ||
+            $this->atLeastOnetagIsIn($tags, $this->publicTags)
+        ) {
             $isPublic = true;
         }
 
-        // publish if no public tags are specified.
-        if (empty($this->publicTags)) {
-            $isPublic = true;
-        }
-
-        // publish if category is under one of public categories.
-        if (!$isPublic) {
-            foreach ($this->publicCategories as $publicCategory) {
-                if (preg_match(sprintf('#^%s#', $publicCategory), $category)) {
-                    $isPublic = true;
-                    break;
-                }
-            }
-        }
-
-        // publish if at least one tag is one of public tags.
-        if (!$isPublic) {
-            foreach ($this->publicTags as $publicTag) {
-                foreach ($tags as $tag) {
-                    if (preg_match(sprintf('/%s/', $publicTag), $tag)) {
-                        $isPublic = true;
-                        break 2;
-                    }
-                }
-            }
-        }
-
-        // unpublish if category is under one of private categories.
-        foreach ($this->privateCategories as $privateCategory) {
-            if (preg_match(sprintf('#^%s#', $privateCategory), $category)) {
-                $isPublic = false;
-                break;
-            }
-        }
-
-        // unpublish if at least one tag is one of private tags.
-        if ($isPublic) {
-            foreach ($this->privateTags as $privateTag) {
-                foreach ($tags as $tag) {
-                    if (preg_match(sprintf('/%s/', $privateTag), $tag)) {
-                        $isPublic = false;
-                        break 2;
-                    }
-                }
-            }
+        if ($this->categoryIsUnderOneOf($category, $this->privateCategories) || $this->atLeastOnetagIsIn($tags, $this->privateTags)) {
+            $isPublic = false;
         }
 
         return $isPublic;
     }
 
     /**
-     * @param array $publicCategories
-     * @return $this
+     * @param string $needle
+     * @param array $haystacks
+     * @return bool
      */
-    public function setPublicCategories($publicCategories)
+    public function categoryIsUnderOneOf($needle, array $haystacks)
     {
-        $this->publicCategories = $publicCategories;
+        foreach ($haystacks as $haystack) {
+            if (preg_match(sprintf('#^%s#', $haystack), $needle)) {
+                return true;
+            }
+        }
 
-        return $this;
+        return false;
     }
 
     /**
-     * @param array $publicTags
-     * @return $this
+     * @param array $needles
+     * @param array $haystacks
+     * @return bool
      */
-    public function setPublicTags($publicTags)
+    public function atLeastOneTagIsIn(array $needles, array $haystacks)
     {
-        $this->publicTags = $publicTags;
+        foreach ($haystacks as $haystack) {
+            foreach ($needles as $needle) {
+                if ($needle === $haystack) {
+                    return true;
+                }
+            }
+        }
 
-        return $this;
-    }
-
-    /**
-     * @param array $privateCategories
-     * @return $this
-     */
-    public function setPrivateCategories($privateCategories)
-    {
-        $this->privateCategories = $privateCategories;
-
-        return $this;
-    }
-
-    /**
-     * @param array $privateTags
-     * @return $this
-     */
-    public function setPrivateTags($privateTags)
-    {
-        $this->privateTags = $privateTags;
-
-        return $this;
+        return false;
     }
 }
