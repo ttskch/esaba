@@ -15,7 +15,8 @@ cache:
 
 before_script:
   - composer self-update
-  - composer update $DEPENDENCIES
+  - composer update
+  - cp config/config.secret.php{.placeholder,}
 
 script:
   - ./vendor/bin/phpunit --coverage-clover=coverage.clover
