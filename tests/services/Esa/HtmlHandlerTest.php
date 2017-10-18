@@ -158,7 +158,8 @@ class HtmlHandlerTest extends TestCase
         $backReferenceNumberForPostId = null;
         $pattern = $this->SUT->getPostUrlPattern($backReferenceNumberForPostId);
 
-        $result = $this->SUT->getATagReducer($pattern)($node->reveal());
+        $reducer = $this->SUT->getATagReducer($pattern);
+        $result = $reducer($node->reveal());
 
         $this->assertEquals($expect, $result);
     }
