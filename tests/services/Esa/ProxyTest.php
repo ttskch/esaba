@@ -6,7 +6,6 @@ use Doctrine\Common\Cache\Cache;
 use PHPUnit\Framework\TestCase;
 use Polidog\Esa\Client;
 use Prophecy\Argument;
-use Prophecy\Prophecy\ObjectProphecy;
 
 class ProxyTest extends TestCase
 {
@@ -17,22 +16,20 @@ class ProxyTest extends TestCase
 
     /**
      * @dataProvider getPostDataProvider
-     * @group tmp
      */
     public function testGetPost($force, $cacheExists, $expected)
     {
         $cache = $this->prophesize(Cache::class);
 
         if (!$force) {
-            $cache->fetch(Argument::type('string'))->willReturn($cacheExists ? ['post' => 'cached_data'] : false);
+            $cache->fetch(Argument::type('string'))->shouldBeCalled()->willReturn($cacheExists ? ['cached_data'] : false);
         }
 
         if ($force || !$cacheExists) {
-            $client = $this->getFakePolidogEsaClient(json_encode(['post' => 'new_data']));
-            $cache->save(Argument::type('string'), ['post' => 'new_data'])->shouldBeCalled();
-        } else {
-            $client = $this->getFakePolidogEsaClient('');
+            $cache->save(Argument::type('string'), ['new_data'])->shouldBeCalled();
         }
+
+        $client = $this->getFakePolidogEsaClient(json_encode(['new_data']));
 
         $this->SUT = new Proxy($client, $cache->reveal());
 
@@ -44,14 +41,46 @@ class ProxyTest extends TestCase
     public function getPostDataProvider()
     {
         return [
-            [true,  true,  ['post' => 'new_data']],
-            [true,  false, ['post' => 'new_data']],
-            [false, true,  ['post' => 'cached_data']],
-            [false, false, ['post' => 'new_data']],
+            [true,  true,  ['new_data']],
+            [true,  false, ['new_data']],
+            [false, true,  ['cached_data']],
+            [false, false, ['new_data']],
         ];
     }
 
-    // \Polidog\Esa\Client is marked as final and cannot be mocked...
+    /**
+     * @dataProvider getEmojisDataProvider
+     */
+    public function testGetEmojis($cacheExists, $expected)
+    {
+        $cache = $this->prophesize(Cache::class);
+
+        $cache->fetch(Argument::type('string'))->willReturn($cacheExists ? ['cached_data'] : false);
+
+        if (!$cacheExists) {
+            $cache->save(Argument::type('string'), ['new_data'])->shouldBeCalled();
+        }
+
+        $client = $this->getFakePolidogEsaClient(json_encode(['emojis' => ['new_data']]));
+
+        $this->SUT = new Proxy($client, $cache->reveal());
+
+        $emojis = $this->SUT->getEmojis();
+
+        $this->assertEquals($expected, $emojis);
+    }
+
+    public function getEmojisDataProvider()
+    {
+        return [
+            [true,  ['cached_data']],
+            [false, ['new_data']],
+        ];
+    }
+
+    /**
+     * \Polidog\Esa\Client is marked as final and cannot be mocked...
+     */
     private function getFakePolidogEsaClient($json)
     {
         $httpClient = $this->prophesize(\GuzzleHttp\Client::class);
