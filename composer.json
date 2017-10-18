@@ -53,17 +53,13 @@
             "echo 'Started web server on http://localhost:8888'",
             "php -S localhost:8888 -t web"
         ],
-        "test": [
-            "./vendor/bin/phpunit"
-        ],
-        "coverage": [
-            "./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage"
-        ],
-        "post-install-cmd": [
-            "npm install"
-        ],
-        "post-create-project-cmd": [
-            "npm install"
-        ]
+        "build": "npm run build",
+        "watch": "npm run watch",
+        "build-prod": "NODE_ENV=production npm run build",
+        "test": "./vendor/bin/phpunit",
+        "coverage": "./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage",
+        "post-install-cmd": "npm install",
+        "post-update-cmd": "npm install",
+        "post-create-project-cmd": "npm install"
     }
 }

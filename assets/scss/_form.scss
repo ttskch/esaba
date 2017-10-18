@@ -1,5 +1,4 @@
-$color-danger: #dc3545;
-$color-success: #28a745;
+@import "variables";
 
 .form-group > label {
     &.required {

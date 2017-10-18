@@ -1,4 +1,4 @@
-@import "../_variables";
+@import "../variables";
 
 #esa-content {
 
@@ -57,7 +57,7 @@
                 font-size: 0.7em;
                 position: absolute;
                 left: -1.3em;
-                top: 0;
+                top: 0.25em;
                 padding: 0.3em; // for click-ability
                 display: none;
             }
@@ -70,11 +70,11 @@
 
         h1 {
             padding-bottom: 0.3em;
-            border-bottom: 2px solid $color-hr;
+            border-bottom: 2px solid $hr-border-color;
         }
         h2 {
             padding-bottom: 0.3em;
-            border-bottom: 1px solid $color-hr;
+            border-bottom: 1px solid $hr-border-color;
         }
 
         p, ul, ol, table, blockquote {
@@ -193,13 +193,13 @@
         li {
             margin: 0.5em 0;
 
-            &[class^="toc-"] {
-                &[class$="-0-0"] {  // h1
+            &[class^='toc-'] {
+                &[class$='-0-0'] {  // h1
                 }
-                &:not([class$="-0-0"])[class$="-0"] {  // h2
+                &:not([class$='-0-0'])[class$='-0'] {  // h2
                     margin-left: 1em;
                 }
-                &:not([class$="-0"]) {  // h3
+                &:not([class$='-0']) {  // h3
                     margin-left: 2em;
                 }
             }

@@ -1,10 +1,9 @@
 # esaba
 
-[![Latest Stable Version](https://poser.pugx.org/ttskch/esaba/v/stable)](https://packagist.org/packages/ttskch/esaba)
-[![Latest Unstable Version](https://poser.pugx.org/ttskch/esaba/v/unstable)](https://packagist.org/packages/ttskch/esaba)
-[![Total Downloads](https://poser.pugx.org/ttskch/esaba/downloads)](https://packagist.org/packages/ttskch/esaba)
+[![Build Status](https://travis-ci.org/ttskch/esaba.svg?branch=master)](https://travis-ci.org/ttskch/esaba)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ttskch/esaba/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ttskch/esaba/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/ttskch/esaba/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/ttskch/esaba/?branch=master)
+[![Total Downloads](https://poser.pugx.org/ttskch/esaba/downloads)](https://packagist.org/packages/ttskch/esaba)
 
 Host your markdown docs on [esa.io]() with your own css.
 

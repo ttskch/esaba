@@ -1,0 +1,18 @@
+@import "vendors";
+
+// customize bootstrap
+$body-color: $gray-700;
+$text-muted: $gray-600;
+$font-size-base: 14px;
+
+// utilities
+$color-primary: map_get($theme-colors, 'primary');
+$color-secondary: map_get($theme-colors, 'secondary');
+$color-success: map_get($theme-colors, 'success');
+$color-danger: map_get($theme-colors, 'danger');
+$color-warning: map_get($theme-colors, 'warning');
+$color-info: map_get($theme-colors, 'info');
+$color-light: map_get($theme-colors, 'light');
+$color-dark: map_get($theme-colors, 'dark');
+$color-text: $body-color;
+$color-muted: $text-muted;
