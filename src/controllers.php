@@ -49,7 +49,7 @@ $app->get('/post/{id}', function (Request $request, $id) use ($app) {
 
     $toc = $htmlHandler->getToc();
 
-    $assetPath = $assetResolver->getAssetPaths($post['category'], $post['tags']);
+    $assetPaths = $assetResolver->getAssetPaths($post['category'], $post['tags']);
 
     if ($force) {
         return $app->redirect($app['url_generator']->generate('post', ['id' => $id]));
@@ -58,8 +58,8 @@ $app->get('/post/{id}', function (Request $request, $id) use ($app) {
     return $app['twig']->render('post.html.twig', [
         'post' => $post,
         'toc' => $toc,
-        'css' => $assetPath['css'],
-        'js' => $assetPath['js'],
+        'css' => $assetPaths['css'],
+        'js' => $assetPaths['js'],
     ]);
 })
 ->assert('id', '\d+')
