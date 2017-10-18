@@ -17,10 +17,12 @@ class EmojiManagerTest extends TestCase
      */
     private $esa;
 
-    protected function setUp()
+    /**
+     * @dataProvider getImageUrlDataProvider
+     */
+    public function testGetImageUrl($code, $expected)
     {
         $this->esa = $this->prophesize(Proxy::class);
-
         $this->esa->getEmojis()->willReturn([
             [
                 'code' => 'code1',
@@ -41,13 +43,7 @@ class EmojiManagerTest extends TestCase
         ]);
 
         $this->SUT = new EmojiManager($this->esa->reveal());
-    }
 
-    /**
-     * @dataProvider getImageUrlDataProvider
-     */
-    public function testGetImageUrl($code, $expected)
-    {
         $url = $this->SUT->getImageUrl($code);
 
         $this->assertEquals($expected, $url);

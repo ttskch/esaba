@@ -20,7 +20,7 @@ class Proxy
      */
     private $cache;
 
-    const CACHE_KEY_PREFIX = 'ttskch.esa.proxy.';
+    const CACHE_KEY_PREFIX = 'ttskch.esa.proxy';
 
     /**
      * @param Client $client
