@@ -1,5 +1,5 @@
 <?php
-$app['translations.ja'] = [
+$app['config.translations.ja'] = [
     // form
     'Send' => '送信する',
     'Form submitted.' => '送信が完了しました。',

@@ -14,6 +14,6 @@ $app['twig.form.templates'] = [
 
 $app['translator.domains'] = [
     'messages' => [
-        'ja' => $app['translations.ja'],
+        'ja' => $app['config.translations.ja'],
     ],
 ];

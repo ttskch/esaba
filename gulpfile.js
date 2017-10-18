@@ -10,7 +10,7 @@ gulp.task('watch', ['css'], () => {
     gulp.watch('./web/scss/*.scss', ['css'])
 });
 
-gulp.task('css', () => gulp.src('./web/scss/*.scss')
+gulp.task('css', () => gulp.src('./web/scss/**/**/*.scss', { base: './web/scss' })
     .pipe($.sourcemaps.init())
     .pipe($.sass())
     .pipe($.postcss([

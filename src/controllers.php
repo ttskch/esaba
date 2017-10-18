@@ -8,6 +8,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Ttskch\AccessRestrictor;
 use Ttskch\Esa\HtmlHandler;
 use Ttskch\Esa\Proxy;
+use Ttskch\AssetResolver;
 
 //Request::setTrustedProxies(array('127.0.0.1'));
 
@@ -28,6 +29,7 @@ $app->get('/post/{id}', function (Request $request, $id) use ($app) {
     $esa = $app['service.esa.proxy'];                   /** @var Proxy $esa */
     $restrictor = $app['service.access_restrictor'];    /** @var AccessRestrictor $restrictor */
     $htmlHandler = $app['service.esa.html_handler'];    /** @var HtmlHandler $htmlHandler */
+    $assetResolver = $app['service.asset_resolver'];    /** @var AssetResolver $assetResolver */
 
     $force = boolval($request->get('force', 0));
 
@@ -42,10 +44,12 @@ $app->get('/post/{id}', function (Request $request, $id) use ($app) {
     $htmlHandler->replacePostUrls('post', 'id');
     $htmlHandler->disableMentionLinks();
     $htmlHandler->replaceEmojiCodes();
-    $htmlHandler->replaceHtml($app['esa.html_replacements']);
+    $htmlHandler->replaceHtml($app['config.esa.html_replacements']);
     $post['body_html'] = $htmlHandler->dumpHtml();
 
     $toc = $htmlHandler->getToc();
+
+    $assetPath = $assetResolver->getAssetPaths($post['category'], $post['tags']);
 
     if ($force) {
         return $app->redirect($app['url_generator']->generate('post', ['id' => $id]));
@@ -54,6 +58,8 @@ $app->get('/post/{id}', function (Request $request, $id) use ($app) {
     return $app['twig']->render('post.html.twig', [
         'post' => $post,
         'toc' => $toc,
+        'css' => $assetPath['css'],
+        'js' => $assetPath['js'],
     ]);
 })
 ->assert('id', '\d+')
