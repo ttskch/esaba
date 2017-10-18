@@ -50,6 +50,7 @@ class HtmlHandlerTest extends TestCase
 
         $this->expectException(\LogicException::class);
         $this->expectExceptionMessage('Initialize before using.');
+
         $this->SUT->$method(@$args[0], @$args[1]);
     }
 

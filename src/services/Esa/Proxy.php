@@ -5,6 +5,9 @@ namespace Ttskch\Esa;
 use Doctrine\Common\Cache\Cache;
 use Polidog\Esa\Client;
 
+/**
+ * @see https://docs.esa.io/posts/102
+ */
 class Proxy
 {
     /**
