@@ -67,6 +67,35 @@ $app->get('/post/{id}', function (Request $request, $id) use ($app) {
 ;
 
 
+$app->post('/webhook', function (Request $request) use ($app) {
+
+    $payload = $request->getContent();
+    $signature = $request->headers->get('X-Esa-Signature');
+
+    if ($signature && !$app['service.esa.webhook_validator']->isValid($payload, $signature)) {
+        throw new NotFoundHttpException();
+    }
+
+    $body = json_decode($request->getContent(), true);
+
+    switch ($body['kind']) {
+        case 'post_create':
+        case 'post_update':
+            $app['service.esa.proxy']->getPost($body['post']['number'], true);
+            if ($app['debug']) {
+                $app['monolog']->debug(sprintf('Cache for post %d is warmed up!', $body['post']['number']));
+            }
+            break;
+        default:
+            break;
+    }
+
+    return new Response('OK');
+})
+->bind('webhook')
+;
+
+
 $app->error(function (\Exception $e, Request $request, $code) use ($app) {
 
     if ($app['debug']) {

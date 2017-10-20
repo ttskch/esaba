@@ -92,6 +92,39 @@ class controllersTest extends WebTestCase
         $this->app['service.asset_resolver'] = $assetResolver->reveal();
     }
 
+    /**
+     * @see https://docs.esa.io/posts/37
+     */
+    public function testWebhook()
+    {
+        $this->app['config.esa.webhook_secret'] = 'secret';
+        $payloads['post_create'] = trim(file_get_contents(__DIR__.'/fixtures/payload.post_create.json'));
+        $payloads['post_update'] = trim(file_get_contents(__DIR__.'/fixtures/payload.post_update.json'));
+        $signatures['post_create'] = trim(file_get_contents(__DIR__.'/fixtures/signature.post_create.txt'));
+        $signatures['post_update'] = trim(file_get_contents(__DIR__.'/fixtures/signature.post_update.txt'));
+
+        $proxy = $this->prophesize(Proxy::class);
+        $proxy->getPost(1253, true)->shouldBeCalledTimes(3);
+        $this->app['service.esa.proxy'] = $proxy->reveal();
+
+        $client = $this->createClient();
+
+        $client->request('POST', '/webhook', [], [], ['HTTP_X-Esa-Signature' => $signatures['post_create']], $payloads['post_create']);
+        $this->assertTrue($client->getResponse()->isOk());
+
+        $client->request('POST', '/webhook', [], [], ['HTTP_X-Esa-Signature' => $signatures['post_update']], $payloads['post_update']);
+        $this->assertTrue($client->getResponse()->isOk());
+
+        $client->request('POST', '/webhook', [], [], [], $payloads['post_update']);
+        $this->assertTrue($client->getResponse()->isOk());
+
+        $client->request('POST', '/webhook', [], [], ['HTTP_X-Esa-Signature' => $signatures['post_create']], 'invalid_payload');
+        $this->assertTrue($client->getResponse()->isClientError());
+
+        $client->request('POST', '/webhook', [], [], [], '{"kind":"other"}');
+        $this->assertTrue($client->getResponse()->isOk());
+    }
+
     public function testError()
     {
         $client = $this->createClient();
@@ -107,6 +140,7 @@ class controllersTest extends WebTestCase
     public function createApplication()
     {
         $app = require __DIR__.'/../src/app.php';
+        require __DIR__.'/../src/services.php';
         require __DIR__.'/../config/config.php';
         require __DIR__.'/../config/dev.php';
         require __DIR__.'/../src/controllers.php';
