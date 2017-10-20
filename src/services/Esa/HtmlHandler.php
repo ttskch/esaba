@@ -239,7 +239,7 @@ class HtmlHandler
     {
         $this->ensureInitialized();
 
-        $toc = $this->crawler->filter('h1, h2, h3')->each($this->getWalkerForToc());
+        $toc = $this->crawler->filter('h1 > a, h2 > a, h3 > a')->each($this->getWalkerForToc());
 
         return $toc;
     }

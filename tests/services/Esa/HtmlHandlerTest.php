@@ -236,7 +236,7 @@ class HtmlHandlerTest extends TestCase
 
     public function testGetToc()
     {
-        $this->crawler->filter('h1, h2, h3')->willReturn($this->crawler->reveal());
+        $this->crawler->filter('h1 > a, h2 > a, h3 > a')->willReturn($this->crawler->reveal());
         $this->crawler->each(Argument::type(\Closure::class))->willReturn(['map']);
 
         $toc = $this->SUT->getToc();
