@@ -33,11 +33,11 @@ $app['config.esa.asset'] = [
     // if post matches multiple category based conditions, condition based deeper category is enabled.
     // if post matches multiple tag based conditions, any one is arbitrarily enabled.
     'category/full/name' => [
-        'css' => 'css/post/default.css',
-        'js' => 'js/post/default.css',
+        'css' => 'css/post/your-own.css',
+        'js' => 'js/post/your-own.js',
     ],
     '#tag_name' => [
-        'css' => 'css/post/default.css',
+        'css' => 'css/post/your-own.css',
         // if one of 'css' or 'js' is omitted, default.(css|js) is used.
     ],
 ];
