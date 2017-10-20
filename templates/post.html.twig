@@ -49,17 +49,19 @@
                 {% endautoescape %}
             </div>
         </div>
-        <div class="col">
+        <div id="side-nav" class="col">
             {% if toc|length %}
-                <div id="toc-box" class="d-none d-lg-block">
-                    <h6>Index</h6>
-                    <ul class="small">
-                        {% for h in toc %}
-                            <li class="toc-{{ h.id }}">
-                                <a href="#{{ h.id }}">{{ h.text }}</a>
-                            </li>
-                        {% endfor %}
-                    </ul>
+                <h6 class="mb-0"><i class="fa fa-align-left"></i> Index</h6>
+                <div id="toc-wrapper" class="d-none d-lg-block py-3">
+                    <div id="toc-box">
+                        <ul class="small">
+                            {% for h in toc %}
+                                <li class="toc-{{ h.id }}">
+                                    <a href="#{{ h.id }}">{{ h.text }}</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
             {% endif %}
         </div>

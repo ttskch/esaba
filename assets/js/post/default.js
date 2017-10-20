@@ -1,3 +1,5 @@
+const stickybits = require('stickybits');
+
 $('#esa-content-body .code-block pre.plaintext code').addClass('nohighlight');
 
 $('#esa-content-body table')
@@ -10,3 +12,5 @@ $('#esa-content-body table')
         }
     })
 ;
+
+stickybits('#toc-wrapper');

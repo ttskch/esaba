@@ -177,30 +177,32 @@
     }
 }
 
-#toc-box {
-    border-left: 4px solid $color-secondary;
-    padding: 0.5em 0;
-    padding-left: 1em;
-
+#toc-wrapper {
     h6 {
         margin-bottom: 1em;
     }
 
-    ul {
-        padding-left: 1.5em;
-        margin-bottom: 0;
+    #toc-box {
+        border-left: 4px solid $color-secondary;
+        padding: 0.5em 0;
+        padding-left: 1em;
 
-        li {
-            margin: 0.5em 0;
+        ul {
+            padding-left: 1.5em;
+            margin-bottom: 0;
 
-            &[class^='toc-'] {
-                &[class$='-0-0'] {  // h1
-                }
-                &:not([class$='-0-0'])[class$='-0'] {  // h2
-                    margin-left: 1em;
-                }
-                &:not([class$='-0']) {  // h3
-                    margin-left: 2em;
+            li {
+                margin: 0.5em 0;
+
+                &[class^='toc-'] {
+                    &[class$='-0-0'] { // h1
+                    }
+                    &:not([class$='-0-0'])[class$='-0'] { // h2
+                        margin-left: 1em;
+                    }
+                    &:not([class$='-0']) { // h3
+                        margin-left: 2em;
+                    }
                 }
             }
         }
@@ -208,7 +210,7 @@
 }
 
 @media print {
-    #global-nav, #global-footer, #toc-box {
+    #global-nav, #global-footer, #side-nav {
         display: none;
     }
 

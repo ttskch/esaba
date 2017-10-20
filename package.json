@@ -11,7 +11,8 @@
     "jquery": "^3.2.1",
     "popper.js": "^1.12.5",
     "select2": "^4.0.4",
-    "select2-bootstrap-theme": "0.1.0-beta.10"
+    "select2-bootstrap-theme": "0.1.0-beta.10",
+    "stickybits": "^2.0.7"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.5",
