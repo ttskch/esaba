@@ -239,7 +239,7 @@ class HtmlHandler
     {
         $this->ensureInitialized();
 
-        $toc = $this->crawler->filter('h1 > a, h2 > a, h3 > a')->each($this->getWalkerForToc());
+        $toc = $this->crawler->filter('h1, h2, h3')->each($this->getWalkerForToc());
 
         return $toc;
     }
@@ -254,8 +254,9 @@ class HtmlHandler
         $walker = function (Crawler $node) {
             return [
                 'id' => $node->attr('id'),
-                // 'text' => $node->text(),
-                'text' => preg_replace('/^\s*>\s*/', '', $node->text()),    // workaround...
+                // 'text' => $node->filter('a')->text(),
+                // workaround...
+                'text' => preg_replace('/^\s*>\s*/', '', $node->filter('a')->text()),
             ];
         };
 

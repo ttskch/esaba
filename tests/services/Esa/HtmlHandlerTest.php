@@ -236,7 +236,7 @@ class HtmlHandlerTest extends TestCase
 
     public function testGetToc()
     {
-        $this->crawler->filter('h1 > a, h2 > a, h3 > a')->willReturn($this->crawler->reveal());
+        $this->crawler->filter('h1, h2, h3')->willReturn($this->crawler->reveal());
         $this->crawler->each(Argument::type(\Closure::class))->willReturn(['map']);
 
         $toc = $this->SUT->getToc();
@@ -249,6 +249,7 @@ class HtmlHandlerTest extends TestCase
         $this->assertInstanceOf(\Closure::class, $walker);
 
         $this->crawler->attr('id')->willReturn('id');
+        $this->crawler->filter('a')->willReturn($this->crawler->reveal());
         $this->crawler->text()->willReturn('text');
 
         $replacements = $walker($this->crawler->reveal());
