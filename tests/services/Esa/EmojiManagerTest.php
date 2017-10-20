@@ -17,11 +17,14 @@ class EmojiManagerTest extends TestCase
      */
     private $esa;
 
+    /**
+     * @var array
+     */
+    private $emojis;
+
     protected function setUp()
     {
-        $this->esa = $this->prophesize(Proxy::class);
-
-        $this->esa->getEmojis()->willReturn([
+        $this->emojis = [
             [
                 'code' => 'code1',
                 'aliases' => [
@@ -38,7 +41,15 @@ class EmojiManagerTest extends TestCase
                 ],
                 'url' => 'url2',
             ],
-        ]);
+            [
+                'code' => 'code3',
+                'aliases' => [],
+                'url' => 'url3',
+            ],
+        ];
+
+        $this->esa = $this->prophesize(Proxy::class);
+        $this->esa->getEmojis()->willReturn($this->emojis);
 
         $this->SUT = new EmojiManager($this->esa->reveal());
     }
@@ -63,6 +74,7 @@ class EmojiManagerTest extends TestCase
             ['code2', 'url2'],
             ['alias_to_code2_1', 'url2'],
             ['alias_to_code2_2', 'url2'],
+            ['code3', 'url3'],
         ];
     }
 
@@ -72,5 +84,21 @@ class EmojiManagerTest extends TestCase
         $this->expectExceptionMessage('Undefined emoji code.');
 
         $this->SUT->getImageUrl('undefined_emoji');
+    }
+
+    public function testFlattenEmojis()
+    {
+        $flattened = $this->SUT->flattenEmojis($this->emojis);
+        ksort($flattened);
+
+        $this->assertEquals([
+            'alias_to_code1_1' => 'url1',
+            'alias_to_code1_2' => 'url1',
+            'alias_to_code2_1' => 'url2',
+            'alias_to_code2_2' => 'url2',
+            'code1'            => 'url1',
+            'code2'            => 'url2',
+            'code3'            => 'url3',
+        ], $flattened);
     }
 }

@@ -17,7 +17,7 @@ class EmojiManager
     public function __construct(Proxy $esa)
     {
         $this->esa = $esa;
-        $this->emojis = $this->esa->getEmojis();
+        $this->emojis = $this->flattenEmojis($this->esa->getEmojis());
     }
 
     /**
@@ -26,18 +26,31 @@ class EmojiManager
      */
     public function getImageUrl($code)
     {
-        foreach ($this->emojis as $emoji) {
-            if ($emoji['code'] === $code) {
-                return $emoji['url'];
-            }
-
-            foreach ($emoji['aliases'] as $alias) {
-                if ($alias === $code) {
-                    return $emoji['url'];
-                }
+        foreach ($this->emojis as $key => $url) {
+            if ($key === $code) {
+                return $url;
             }
         }
 
         throw new \LogicException('Undefined emoji code.');
+    }
+
+    /**
+     * @param array $emojis
+     * @return array
+     */
+    public function flattenEmojis(array $emojis)
+    {
+        $flattened = [];
+
+        foreach ($emojis as $emoji) {
+            $flattened[$emoji['code']] = $emoji['url'];
+
+            foreach ($emoji['aliases'] as $alias) {
+                $flattened[$alias] = $emoji['url'];
+            }
+        }
+
+        return $flattened;
     }
 }
