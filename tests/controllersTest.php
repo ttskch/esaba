@@ -2,9 +2,6 @@
 
 use Prophecy\Argument;
 use Silex\WebTestCase;
-use Ttskch\AccessRestrictor;
-use Ttskch\AssetResolver;
-use Ttskch\Esa\HtmlHandler;
 use Ttskch\Esa\Proxy;
 
 class controllersTest extends WebTestCase
@@ -21,16 +18,36 @@ class controllersTest extends WebTestCase
         $this->assertTrue($client->getResponse()->isRedirect('/post/1'));
     }
 
+    /**
+     * @see https://docs.esa.io/posts/37
+     */
     public function testGetPost()
     {
-        $client = $this->createClient();
+        $this->app['config.esa.private'] = [
+            'categories' => [],
+            'tags' => ['private'],
+        ];
 
-        $this->mockOriginalServices();
+        $esa = $this->prophesize(Proxy::class);
+
+        $posts = [
+            1 => json_decode(trim(file_get_contents(__DIR__.'/fixtures/post/post.1.json')), true),
+            2 => json_decode(trim(file_get_contents(__DIR__.'/fixtures/post/post.2.json')), true),
+        ];
+        $esa->getPost(1, Argument::cetera())->willReturn($posts[1]);
+        $esa->getPost(2, Argument::cetera())->willReturn($posts[2]);
+
+        $emojis = json_decode(trim(file_get_contents(__DIR__.'/fixtures/post/emojis.json')), true)['emojis'];
+        $esa->getEmojis()->willReturn($emojis);
+
+        $this->app['service.esa.proxy'] = $esa->reveal();
+
+        $client = $this->createClient();
 
         // public post
         $crawler = $client->request('GET', '/post/1');
         $this->assertTrue($client->getResponse()->isOk());
-        $this->assertContains('esa-content', $crawler->filter('#esa-content')->text());
+        $this->assertContains('Getting Started', $crawler->filter('#esa-content')->text());
 
         // private post
         $client->request('GET', '/post/2');
@@ -41,71 +58,19 @@ class controllersTest extends WebTestCase
         $this->assertTrue($client->getResponse()->isRedirect('/post/1'));
     }
 
-    private function mockOriginalServices()
-    {
-        $esa = $this->prophesize(Proxy::class);
-        $esa->getPost(1, Argument::cetera())->willReturn([
-            'number' => 1,
-            'full_name' => 'full_name',
-            'name' => 'name',
-            'updated_at' => '2000-01-01 00:00:00',
-            'wip' => false,
-            'url' => 'url',
-            'body_html' => 'body_html',
-            'category' => 'public',
-            'tags' => [],
-        ]);
-        $esa->getPost(2, Argument::cetera())->willReturn([
-            'number' => 2,
-            'full_name' => 'full_name',
-            'name' => 'name',
-            'updated_at' => '2000-01-01 00:00:00',
-            'wip' => false,
-            'url' => 'url',
-            'body_html' => 'body_html',
-            'category' => 'private',
-            'tags' => [],
-        ]);
-
-        $restrictor = $this->prophesize(AccessRestrictor::class);
-        $restrictor->isPublic('public', Argument::cetera())->willReturn(true);
-        $restrictor->isPublic('private', Argument::cetera())->willReturn(false);
-
-        $htmlHandler = $this->prophesize(HtmlHandler::class);
-        $htmlHandler->initialize(Argument::cetera())->shouldBeCalled();
-        $htmlHandler->replacePostUrls(Argument::cetera())->shouldBeCalled();
-        $htmlHandler->disableMentionLinks()->shouldBeCalled();
-        $htmlHandler->replaceEmojiCodes()->shouldBeCalled();
-        $htmlHandler->replaceHtml(Argument::cetera())->shouldBeCalled();
-        $htmlHandler->dumpHtml(Argument::cetera())->willReturn('<p>esa-content</p>');
-        $htmlHandler->getToc()->willReturn([]);
-
-        $assetResolver = $this->prophesize(AssetResolver::class);
-        $assetResolver->getAssetPaths(Argument::cetera())->willReturn([
-            'css' => 'css/post/default.css',
-            'js' => 'js/post/default.js',
-        ]);
-
-        $this->app['service.esa.proxy'] = $esa->reveal();
-        $this->app['service.access_restrictor'] = $restrictor->reveal();
-        $this->app['service.esa.html_handler'] = $htmlHandler->reveal();
-        $this->app['service.asset_resolver'] = $assetResolver->reveal();
-    }
-
     /**
      * @see https://docs.esa.io/posts/37
      */
     public function testWebhook()
     {
-        $this->app['config.esa.webhook_secret'] = 'secret';
-        $payloads['post_create'] = trim(file_get_contents(__DIR__.'/fixtures/payload.post_create.json'));
-        $payloads['post_update'] = trim(file_get_contents(__DIR__.'/fixtures/payload.post_update.json'));
-        $signatures['post_create'] = trim(file_get_contents(__DIR__.'/fixtures/signature.post_create.txt'));
-        $signatures['post_update'] = trim(file_get_contents(__DIR__.'/fixtures/signature.post_update.txt'));
+        $payloads['post_create'] = trim(file_get_contents(__DIR__.'/fixtures/webhook/payload.post_create.json'));
+        $payloads['post_update'] = trim(file_get_contents(__DIR__.'/fixtures/webhook/payload.post_update.json'));
+        $signatures['post_create'] = trim(file_get_contents(__DIR__.'/fixtures/webhook/signature.post_create.txt'));
+        $signatures['post_update'] = trim(file_get_contents(__DIR__.'/fixtures/webhook/signature.post_update.txt'));
 
-        $proxy = $this->prophesize(Proxy::class);
-        $proxy->getPost(1253, true)->shouldBeCalledTimes(3);
-        $this->app['service.esa.proxy'] = $proxy->reveal();
+        $esa = $this->prophesize(Proxy::class);
+        $esa->getPost(1253, true)->shouldBeCalledTimes(3);
+        $this->app['service.esa.proxy'] = $esa->reveal();
 
         $client = $this->createClient();
 
@@ -145,6 +110,10 @@ class controllersTest extends WebTestCase
         require __DIR__.'/../config/dev.php';
         require __DIR__.'/../src/controllers.php';
         $app['session.test'] = true;
+
+        $app['config.esa.team_name'] = 'test';
+        $app['config.esa.access_token'] = 'token';
+        $app['config.esa.webhook_secret'] = 'secret';
 
         return $this->app = $app;
     }

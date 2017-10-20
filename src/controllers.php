@@ -2,8 +2,6 @@
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Ttskch\AccessRestrictor;
 use Ttskch\Esa\HtmlHandler;
@@ -30,7 +28,6 @@ $app->get('/post/{id}', function (Request $request, $id) use ($app) {
     $restrictor = $app['service.access_restrictor'];    /** @var AccessRestrictor $restrictor */
     $htmlHandler = $app['service.esa.html_handler'];    /** @var HtmlHandler $htmlHandler */
     $assetResolver = $app['service.asset_resolver'];    /** @var AssetResolver $assetResolver */
-
     $force = boolval($request->get('force', 0));
 
     $post = $esa->getPost($id, $force);
