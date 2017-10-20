@@ -46,20 +46,39 @@ class AssetResolver
             'js' => self::DEFAULT_JS_PATH,
         ];
 
+        $categoryBasedAssetPaths = $this->getCategoryBasedAssetPaths($category);
+        $tagBasedAssetPaths = $this->getTagBasedAssetPaths($tags);
+
+        return array_merge($assetPaths, $categoryBasedAssetPaths, $tagBasedAssetPaths);
+    }
+
+    /**
+     * @param $category
+     * @return array
+     */
+    public function getCategoryBasedAssetPaths($category)
+    {
         foreach ($this->categoryBasedConfig as $matcher => $paths) {
             if (preg_match(sprintf('#^%s#', $matcher), $category)) {
-                $assetPaths = array_merge($assetPaths, $paths);
-                break;  // deeper category should match early.
+                return $paths;  // deeper category should match early.
             }
         }
 
+        return [];
+    }
+
+    /**
+     * @param array $tags
+     * @return array
+     */
+    public function getTagBasedAssetPaths(array $tags)
+    {
         foreach ($this->tagBasedConfig as $matcher => $paths) {
             if (in_array(substr($matcher, 1), $tags)) {
-                $assetPaths = array_merge($assetPaths, $paths);
-                break;
+                return $paths;
             }
         }
 
-        return $assetPaths;
+        return [];
     }
 }

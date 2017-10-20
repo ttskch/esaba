@@ -87,4 +87,31 @@ class AssetResolverTest extends TestCase
             ['a/b/c/d', ['css' => 'category-abc.css', 'js' => 'category-abc.js']],
         ];
     }
+
+    public function testGetCategoryBasedAssetPaths()
+    {
+        $this->SUT = new AssetResolver([
+            'a/b' =>   ['paths1'],
+            'a/b/c' => ['paths2'],
+        ]);
+
+        $this->assertEquals(['paths1'], $this->SUT->getCategoryBasedAssetPaths('a/b'));
+        $this->assertEquals(['paths2'], $this->SUT->getCategoryBasedAssetPaths('a/b/c'));
+        $this->assertEquals(['paths1'], $this->SUT->getCategoryBasedAssetPaths('a/b/d'));
+        $this->assertEquals([], $this->SUT->getCategoryBasedAssetPaths('unknown'));
+    }
+
+    public function testGetTagBasedAssetPaths()
+    {
+        $this->SUT = new AssetResolver([
+            '#tag1' => ['paths1'],
+            '#tag2' => ['paths2'],
+            '#tag3' => ['paths3'],
+        ]);
+
+        $this->assertEquals(['paths1'], $this->SUT->getTagBasedAssetPaths(['tag1']));
+        $this->assertEquals(['paths2'], $this->SUT->getTagBasedAssetPaths(['tag2', 'tag4']));
+        $this->assertEquals([], $this->SUT->getTagBasedAssetPaths(['tag4', 'tag5']));
+        $this->assertArraySubset($this->SUT->getTagBasedAssetPaths(['tag2', 'tag3']), ['paths2', 'paths3']);
+    }
 }
