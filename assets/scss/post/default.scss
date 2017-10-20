@@ -208,7 +208,26 @@
 }
 
 @media print {
-    #toc-box {
+    #global-nav, #global-footer, #toc-box {
         display: none;
+    }
+
+    #esa-content-header {
+        .actions {
+            display: none;
+        }
+    }
+
+    .code-block {
+        .code-filename {
+            border: 1px solid $color-secondary;
+            border-bottom: none;
+        }
+    }
+
+    blockquote {
+        border-top: none;
+        border-right: none;
+        border-bottom: none;
     }
 }

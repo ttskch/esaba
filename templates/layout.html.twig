@@ -39,7 +39,7 @@
 
 <body class="bg-light">
 {% block body %}
-    <nav class="navbar navbar-expand-md navbar-light bg-secondary">
+    <nav id="global-nav" class="navbar navbar-expand-md navbar-light bg-secondary">
         <div class="container">
             <a class="navbar-brand text-white" href="{% block navbar_brand_url %}{{ path('homepage') }}{% endblock %}">
                 <img src="{{ asset('img/esa/toriatama.png') }}" alt="esa" class="mr-2" style="height:25px; width:auto;">
@@ -74,7 +74,7 @@
             {% endblock %}
         </div>
     </div>
-    <footer class="clearfix py-3 text-secondary">
+    <footer id="global-footer" class="clearfix py-3 text-secondary">
         <div class="container">
             {% block footer %}
                 <div class="small">
