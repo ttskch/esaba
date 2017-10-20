@@ -9,18 +9,17 @@ $app['config.esa.public'] = [
     ],
     'tags' => [
         // tag names to be published.
-        // empty to publish all.
     ],
 ];
 
 $app['config.esa.private'] = [
     'categories' => [
-        // category names to be unpublished.
-        // this overwrites esa.public.categories config.
+        // category names to be withheld.
+        // this overwrites esa.public config.
     ],
     'tags' => [
-        // tag names to be unpublished.
-        // this overwrites esa.public.tags config.
+        // tag names to be withheld.
+        // this overwrites esa.public config.
     ],
 ];
 

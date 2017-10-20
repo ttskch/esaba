@@ -39,16 +39,31 @@ class AccessRestrictor
      */
     public function isPublic($category, array $tags)
     {
-        if ($this->categoryIsUnderOneOf($category, $this->privateCategories) || $this->atLeastOneTagIsIn($tags, $this->privateTags)) {
+        if ($this->isWithheld($category, $tags)) {
             return false;
         }
 
-        return (
-            empty($this->publicCategories) ||
-            $this->categoryIsUnderOneOf($category, $this->publicCategories) ||
-            empty($this->publicTags) ||
-            $this->atLeastOnetagIsIn($tags, $this->publicTags)
-        );
+        return empty($this->publicCategories) || $this->isPublished($category, $tags);
+    }
+
+    /**
+     * @param string $category
+     * @param array $tags
+     * @return bool
+     */
+    public function isPublished($category, array $tags)
+    {
+        return $this->categoryIsUnderOneOf($category, $this->publicCategories) || $this->atLeastOneTagIsIn($tags, $this->publicTags);
+    }
+
+    /**
+     * @param string $category
+     * @param array $tags
+     * @return bool
+     */
+    public function isWithheld($category, array $tags)
+    {
+        return $this->categoryIsUnderOneOf($category, $this->privateCategories) || $this->atLeastOneTagIsIn($tags, $this->privateTags);
     }
 
     /**

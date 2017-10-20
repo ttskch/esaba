@@ -67,8 +67,22 @@ class AccessRestrictorTest extends TestCase
             ['tag3', 'tag4']  // private tags
         );
 
-        $this->assertTrue($this->SUT->isPublic('unknown', ['any1', 'any2']));
+        $this->assertFalse($this->SUT->isPublic('unknown', ['any1', 'any2']));
         $this->assertFalse($this->SUT->isPublic('unknown', ['any1', 'tag3']));
+    }
+
+    public function testIsPublished()
+    {
+        $this->assertTrue($this->SUT->isPublished('a/b', []));
+        $this->assertTrue($this->SUT->isPublished('unknown', ['tag1']));
+        $this->assertFalse($this->SUT->isPublished('unknown', ['tag5']));
+    }
+
+    public function testIsWithheld()
+    {
+        $this->assertTrue($this->SUT->isWithheld('a/b/c', []));
+        $this->assertTrue($this->SUT->isWithheld('unknown', ['tag3']));
+        $this->assertFalse($this->SUT->isWithheld('a/b', []));
     }
 
     /**
