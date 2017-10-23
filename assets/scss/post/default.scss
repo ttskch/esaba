@@ -70,6 +70,10 @@ $hr-border-color: rgba(#000,.1);
                     display: block;
                 }
             }
+
+            img.emoji {
+                height: 1em;
+            }
         }
 
         h1 {
