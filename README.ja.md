@@ -112,7 +112,7 @@ $app['config.esa.asset'] = [
 
 ### webpackによる独自アセットのビルド
 
-esabaはscss/webpackに対応しています。 `./assets/scss/post/*.scss` および `./assets/js/post/*.js` はビルド後に `./web/css/post/**.css` `./web/js/post/*.js` として配置されます。
+esaba is scss/webpack ready. `./assets/post/*.(scss|js)` が自動でビルド対象になり、以下のように `./web/(css|js)/post/*.(css|js)` として配置されます。
 
 ```bash
 $ vi assets/scss/post/your-own.scss

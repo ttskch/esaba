@@ -1,7 +1,4 @@
 <?php
-require __DIR__.'/config.secret.php';
-require __DIR__.'/config.translations.ja.php';
-
 $app['config.esa.public'] = [
     'categories' => [
         // category names to be published.
@@ -41,3 +38,6 @@ $app['config.esa.asset'] = [
         // if one of 'css' or 'js' is omitted, default.(css|js) is used.
     ],
 ];
+
+require __DIR__.'/config.secret.php';
+require __DIR__.'/config.translations.ja.php';

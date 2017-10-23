@@ -117,10 +117,10 @@ And deploy `./web/css/post/your-own.css` and `./web/js/post/your-own.js`.
 
 ### Building your own assets with webpack
 
-esaba is scss/webpack ready. `./assets/scss/post/*.scss` and `./assets/js/post/*.js` can be built and deploy to `./web/css/post/**.css` and `./web/js/post/*.js` by webpack just like below.
+esaba is scss/webpack ready. `./assets/post/*.(scss|js)` will be built and deploy to `./web/(css|js)/post/*.(css|js)` by webpack automatically just like below.
 
 ```bash
-$ vi assets/scss/post/your-own.scss
+$ vi assets/post/your-own.scss
 $ npm run build
   :
 $ tree web/css/post

@@ -1,4 +1,5 @@
 const path = require('path');
+const klaw = require('klaw-sync');
 
 const ProvidePlugin = require('webpack/lib/ProvidePlugin');
 const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
@@ -31,21 +32,34 @@ if (isProd) {
     ]);
 }
 
+let entries = {
+    'main': [
+        './assets/js/main.js',
+        './assets/scss/main.scss',
+    ],
+    'vendors': [
+        './assets/js/vendors.js',
+        './assets/scss/vendors.scss',
+    ],
+};
+
+let files = klaw('./assets/post', {
+    nodir: true,
+    filter: file => ['.js', '.scss'].indexOf(path.extname(file.path)) !== -1
+});
+
+files.forEach(file => {
+    let relativePath = path.relative('./assets', file.path);
+    let key = relativePath.replace(new RegExp(path.extname(file.path)), '');
+    if (entries.hasOwnProperty(key)) {
+        entries[key].push(file.path);
+    } else {
+        entries[key] = [file.path];
+    }
+});
+
 module.exports = {
-    entry: {
-        'main': [
-            './assets/js/main.js',
-            './assets/scss/main.scss',
-        ],
-        'post/default': [
-            './assets/js/post/default.js',
-            './assets/scss/post/default.scss',
-        ],
-        'vendors': [
-            './assets/js/vendors.js',
-            './assets/scss/vendors.scss',
-        ],
-    },
+    entry: entries,
     output: {
         path: path.resolve(__dirname, './web'),
         filename: 'js/[name].js',
