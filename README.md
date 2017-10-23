@@ -5,11 +5,22 @@
 [![Code Coverage](https://scrutinizer-ci.com/g/ttskch/esaba/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/ttskch/esaba/?branch=master)
 [![Total Downloads](https://poser.pugx.org/ttskch/esaba/downloads)](https://packagist.org/packages/ttskch/esaba)
 
-Host your markdown docs on [esa.io]() with your own css.
+[日本語はこちら](README.ja.md)
+
+## What's this?
+
+esaba hosts your markdown docs on [esa.io](https://esa.io). Url like `/post/:post_number` shows the post publicly.
 
 | on esa.io | on esaba (with default css) |
 | --- | --- |
-| ![image](https://user-images.githubusercontent.com/4360663/31835836-1a715242-b60e-11e7-9090-18bbad54d7a6.png) | ![image](https://user-images.githubusercontent.com/4360663/31834314-7b9f8878-b608-11e7-96a6-3a46873227a7.png) |
+| ![image](https://user-images.githubusercontent.com/4360663/31869357-5c4cae84-b7e2-11e7-9c5f-2d37cb8b00e3.png) | ![image](https://user-images.githubusercontent.com/4360663/31869361-66ef4e8c-b7e2-11e7-8241-9195f2d8b16c.png) |
+
+## Advantages compared to built-in "Share Post" feature
+
+- Can show posts with your own css/js (scss/webpack ready)
+- Flexible setting of access restriction for each category/tag
+- Useful for company internal publishing because it's on-premise
+- No need to know the special sharing urls for each post because of auto replacement of link to other post with corresponding esaba url
 
 ## Requirements
 
@@ -29,7 +40,6 @@ $ vi config/config.secret.php   # tailor to your env
 You must to issue personal access token in advance.
 
 ![image](https://user-images.githubusercontent.com/4360663/31835239-c8ea9b60-b60b-11e7-9d83-ee40eebdfb6c.png)
-
 
 ## Usage
 
@@ -131,4 +141,20 @@ You can configure to automatically warm-up caches for created/updated posts usin
 // config/config.secret.php
 
 $app['config.esa.webhook_secret'] = 'Secret here';
+```
+
+#### Unrestricting access to `/webhook`
+
+If you set some access restrictions on web server layer, you must unrestrict access to `/webhook` for webhook request from esa.io.
+ 
+For example, on Apache 2.4, config like below.
+
+```
+<Location />
+    Require ip xxx.xxx.xxx.xxx
+</Location>
+
+<LocationMatch ^/(index.php|webhook)$>
+    Require all granted
+</LocationMatch>
 ```
