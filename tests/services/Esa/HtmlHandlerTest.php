@@ -245,17 +245,22 @@ class HtmlHandlerTest extends TestCase
 
     public function testGetWalkerForToc()
     {
+        // extract ['id' => 'id', 'text' => 'h-text'] from <h1 id="id"><a>a-text</a>h-text</h1>
+
         $walker = $this->SUT->getWalkerForToc();
         $this->assertInstanceOf(\Closure::class, $walker);
 
+        $filteredCrawler = $this->prophesize(Crawler::class);
+        $filteredCrawler->text()->willReturn('a-text');
+
         $this->crawler->attr('id')->willReturn('id');
-        $this->crawler->filter('a')->willReturn($this->crawler->reveal());
-        $this->crawler->text()->willReturn('text');
+        $this->crawler->filter('a')->willReturn($filteredCrawler->reveal());
+        $this->crawler->text()->willReturn('a-text h-text');
 
         $replacements = $walker($this->crawler->reveal());
         $this->assertEquals([
             'id' => 'id',
-            'text' => 'text',
+            'text' => 'h-text',
         ], $replacements);
     }
 }

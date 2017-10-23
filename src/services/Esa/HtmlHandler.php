@@ -254,9 +254,7 @@ class HtmlHandler
         $walker = function (Crawler $node) {
             return [
                 'id' => $node->attr('id'),
-                // 'text' => $node->filter('a')->text(),
-                // workaround...
-                'text' => preg_replace('/^\s*>\s*/', '', $node->filter('a')->text()),
+                'text' => trim(str_replace($node->filter('a')->text(), '', $node->text())),
             ];
         };
 
