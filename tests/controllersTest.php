@@ -15,7 +15,7 @@ class controllersTest extends WebTestCase
         $this->assertContains('esaba', $crawler->filter('h1')->text());
 
         $client->request('GET', '/', ['post_id' => 1]);
-        $this->assertTrue($client->getResponse()->isRedirect('/post/1'));
+        $this->assertTrue($client->getResponse()->isRedirect('/post/1/'));
     }
 
     /**
@@ -45,17 +45,17 @@ class controllersTest extends WebTestCase
         $client = $this->createClient();
 
         // public post
-        $crawler = $client->request('GET', '/post/1');
+        $crawler = $client->request('GET', '/post/1/');
         $this->assertTrue($client->getResponse()->isOk());
         $this->assertContains('Getting Started', $crawler->filter('#esa-content')->text());
 
         // private post
-        $client->request('GET', '/post/2');
+        $client->request('GET', '/post/2/');
         $this->assertTrue($client->getResponse()->isClientError());
 
         // force get
-        $client->request('GET', '/post/1?force=1');
-        $this->assertTrue($client->getResponse()->isRedirect('/post/1'));
+        $client->request('GET', '/post/1/?force=1');
+        $this->assertTrue($client->getResponse()->isRedirect('/post/1/'));
     }
 
     /**
@@ -74,19 +74,19 @@ class controllersTest extends WebTestCase
 
         $client = $this->createClient();
 
-        $client->request('POST', '/webhook', [], [], ['HTTP_X-Esa-Signature' => $signatures['post_create']], $payloads['post_create']);
+        $client->request('POST', '/webhook/', [], [], ['HTTP_X-Esa-Signature' => $signatures['post_create']], $payloads['post_create']);
         $this->assertTrue($client->getResponse()->isOk());
 
-        $client->request('POST', '/webhook', [], [], ['HTTP_X-Esa-Signature' => $signatures['post_update']], $payloads['post_update']);
+        $client->request('POST', '/webhook/', [], [], ['HTTP_X-Esa-Signature' => $signatures['post_update']], $payloads['post_update']);
         $this->assertTrue($client->getResponse()->isOk());
 
-        $client->request('POST', '/webhook', [], [], [], $payloads['post_update']);
+        $client->request('POST', '/webhook/', [], [], [], $payloads['post_update']);
         $this->assertTrue($client->getResponse()->isOk());
 
-        $client->request('POST', '/webhook', [], [], ['HTTP_X-Esa-Signature' => $signatures['post_create']], 'invalid_payload');
+        $client->request('POST', '/webhook/', [], [], ['HTTP_X-Esa-Signature' => $signatures['post_create']], 'invalid_payload');
         $this->assertTrue($client->getResponse()->isClientError());
 
-        $client->request('POST', '/webhook', [], [], [], '{"kind":"other"}');
+        $client->request('POST', '/webhook/', [], [], [], '{"kind":"other"}');
         $this->assertTrue($client->getResponse()->isOk());
     }
 
