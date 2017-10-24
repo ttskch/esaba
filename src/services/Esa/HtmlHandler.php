@@ -69,8 +69,9 @@ class HtmlHandler
     public function replacePostUrls($routeName, $routeVariableName)
     {
         $backReferenceNumberForPostId = null;
-        $pattern = $this->getPostUrlPattern($backReferenceNumberForPostId);
-        $walker = $this->getATagWalkerForPostUrls($pattern, $backReferenceNumberForPostId, $routeName, $routeVariableName);
+        $backReferenceNumberForAnchorHash = null;
+        $pattern = $this->getPostUrlPattern($backReferenceNumberForPostId, $backReferenceNumberForAnchorHash);
+        $walker = $this->getATagWalkerForPostUrls($pattern, $backReferenceNumberForPostId, $backReferenceNumberForAnchorHash, $routeName, $routeVariableName);
 
         $this->replaceATagWithWalker($pattern, $walker);
     }
@@ -105,13 +106,15 @@ class HtmlHandler
 
     /**
      * @param string $backReferenceNumberForPostId For returning position of post id in regexp pattern.
+     * @param string $backReferenceNumberForAnchorHash For returning position of anchor hash regexp pattern.
      * @return string
      */
-    public function getPostUrlPattern(&$backReferenceNumberForPostId)
+    public function getPostUrlPattern(&$backReferenceNumberForPostId, &$backReferenceNumberForAnchorHash)
     {
         $backReferenceNumberForPostId = 3;
+        $backReferenceNumberForAnchorHash = 5;
 
-        return sprintf('#^((https?:)?//%s\.esa\.io)?/posts/(\d+)(/|/edit/?)?$#', $this->teamName);
+        return sprintf('#^((https?:)?//%s\.esa\.io)?/posts/(\d+)(/|/edit/?)?(\#.+)?$#', $this->teamName);
     }
 
     /**
@@ -144,21 +147,23 @@ class HtmlHandler
      *
      * @param string $pattern
      * @param int $backReferenceNumberForPostId
+     * @param int $backReferenceNumberForAnchorHash
      * @param string $routeName
      * @param string $routeVariableName
      * @return \Closure
      */
-    public function getATagWalkerForPostUrls($pattern, $backReferenceNumberForPostId, $routeName, $routeVariableName)
+    public function getATagWalkerForPostUrls($pattern, $backReferenceNumberForPostId, $backReferenceNumberForAnchorHash, $routeName, $routeVariableName)
     {
         $that = $this;
 
-        $walker = function (Crawler $node) use ($pattern, $backReferenceNumberForPostId, $routeName, $routeVariableName, $that) {
+        $walker = function (Crawler $node) use ($pattern, $backReferenceNumberForPostId, $backReferenceNumberForAnchorHash, $routeName, $routeVariableName, $that) {
             preg_match($pattern, $node->attr('href'), $matches);
             $href = $matches[0];
             $postId = $matches[$backReferenceNumberForPostId];
+            $anchorHash = isset($matches[$backReferenceNumberForAnchorHash]) ? $matches[$backReferenceNumberForAnchorHash] : '';
 
             $pattern = sprintf('/href=(\'|")%s\1/', str_replace('/', '\/', $href));
-            $replacement = sprintf('href="%s"', $that->urlGenerator->generate($routeName, [$routeVariableName => $postId]));
+            $replacement = sprintf('href="%s%s"', $that->urlGenerator->generate($routeName, [$routeVariableName => $postId]), $anchorHash);
 
             return [
                 'pattern' => $pattern,

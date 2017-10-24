@@ -136,7 +136,8 @@ class HtmlHandlerTest extends TestCase
     public function testGetPostUrlPattern()
     {
         $backReferenceNumberForPostId = null;
-        $pattern = $this->SUT->getPostUrlPattern($backReferenceNumberForPostId);
+        $backReferenceNumberForAnchorHash = null;
+        $pattern = $this->SUT->getPostUrlPattern($backReferenceNumberForPostId, $backReferenceNumberForAnchorHash);
 
         $this->assertTrue(is_string($pattern));
     }
@@ -157,7 +158,8 @@ class HtmlHandlerTest extends TestCase
         $node->attr('href')->willReturn($subject);
 
         $backReferenceNumberForPostId = null;
-        $pattern = $this->SUT->getPostUrlPattern($backReferenceNumberForPostId);
+        $backReferenceNumberForAnchorHash = null;
+        $pattern = $this->SUT->getPostUrlPattern($backReferenceNumberForPostId, $backReferenceNumberForAnchorHash);
 
         $reducer = $this->SUT->getATagReducer($pattern);
         $result = $reducer($node->reveal());
@@ -172,18 +174,25 @@ class HtmlHandlerTest extends TestCase
             ['https://team_name.esa.io/posts/123/edit', true],
             ['https://team_name.esa.io/posts/123/', true],
             ['https://team_name.esa.io/posts/123', true],
+            ['https://team_name.esa.io/posts/123#1-0-0', true],
             ['http://team_name.esa.io/posts/123/edit/', true],
             ['http://team_name.esa.io/posts/123/edit', true],
             ['http://team_name.esa.io/posts/123/', true],
             ['http://team_name.esa.io/posts/123', true],
+            ['http://team_name.esa.io/posts/123#1-0-0', true],
             ['//team_name.esa.io/posts/123/edit/', true],
             ['//team_name.esa.io/posts/123/edit', true],
             ['//team_name.esa.io/posts/123/', true],
             ['//team_name.esa.io/posts/123', true],
+            ['//team_name.esa.io/posts/123#1-0-0', true],
             ['/posts/123/edit/', true],
+            ['/posts/123/edit/#1-0-0', true],
             ['/posts/123/edit', true],
+            ['/posts/123/edit#1-0-0', true],
             ['/posts/123/', true],
+            ['/posts/123/#1-0-0', true],
             ['/posts/123', true],
+            ['/posts/123/#1-0-0', true],
             ['https://other_team_name.esa.io/posts/123', false],
             ['posts/123', false],
         ];
@@ -191,12 +200,14 @@ class HtmlHandlerTest extends TestCase
 
     public function testGetATagWalkerForPostUrls()
     {
-        $walker = $this->SUT->getATagWalkerForPostUrls('/(.)/', 1,'', '');
+        $walker = $this->SUT->getATagWalkerForPostUrls('/(.)-(.)/', 1, 2,'', '');
         $this->assertInstanceOf(\Closure::class, $walker);
 
-        $this->crawler->attr('href')->willReturn('href');
+        $this->crawler->attr('href')->willReturn('1-2');
         $replacements = $walker($this->crawler->reveal());
-        $this->assertEquals(count(array_column($replacements, 'pattern')), count(array_column($replacements, 'replacement')));
+
+        $this->assertEquals('/href=(\'|")1-2\1/', $replacements['pattern']);
+        $this->assertEquals('href="2"', $replacements['replacement']);
     }
 
     public function testGetATagWalkerForMentionLinks()
