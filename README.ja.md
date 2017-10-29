@@ -112,7 +112,7 @@ $app['config.esa.asset'] = [
 
 ### webpackによる独自アセットのビルド
 
-esaba is scss/webpack ready. `./assets/post/*.(scss|js)` が自動でビルド対象になり、以下のように `./web/(css|js)/post/*.(css|js)` として配置されます。
+esabaはscss/webpackに対応しています。`./assets/post/*.(scss|js)` が自動でビルド対象になり、以下のように `./web/(css|js)/post/*.(css|js)` として配置されます。
 
 ```bash
 $ vi assets/scss/post/your-own.scss
@@ -130,7 +130,7 @@ web/css/post
 
 [esa Generic Webhook](https://docs.esa.io/posts/37) を使うことで、esa.io上で記事が作成/更新されたときに、esaba側のキャッシュを自動で更新させることができます。
 
-![image](https://user-images.githubusercontent.com/4360663/31834149-01aafeee-b608-11e7-8b63-84dd6f04920e.png)
+![image](https://user-images.githubusercontent.com/4360663/32140978-d312be36-bcb6-11e7-84a4-133ab56506cd.png)
 
 ```php
 // config/config.secret.php
@@ -138,9 +138,9 @@ web/css/post
 $app['config.esa.webhook_secret'] = 'Secret here';
 ```
 
-#### `/webhook` へのアクセスの解放
+#### `/webhook/` へのアクセスの解放
 
-もしWebサーバーレベルでのアクセス制限を設定している場合、 `/webhook` へのアクセスはesa.ioからのwebhookリクエストを受け取るために解放しておく必要があります。
+もしWebサーバーレベルでのアクセス制限を設定している場合、 `/webhook/` へのアクセスはesa.ioからのwebhookリクエストを受け取るために解放しておく必要があります。
 
 例えば、Apache 2.4の場合は以下のような設定が必要になります。
 
@@ -149,7 +149,7 @@ $app['config.esa.webhook_secret'] = 'Secret here';
     Require ip xxx.xxx.xxx.xxx
 </Location>
 
-<LocationMatch ^/(index.php|webhook)$>
+<LocationMatch ^/(index.php|webhook/?)$>
     Require all granted
 </LocationMatch>
 ```

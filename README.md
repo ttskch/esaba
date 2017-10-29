@@ -135,7 +135,7 @@ web/css/post
 
 You can configure to automatically warm-up caches for created/updated posts using [esa Generic Webhook](https://docs.esa.io/posts/37).
 
-![image](https://user-images.githubusercontent.com/4360663/31834149-01aafeee-b608-11e7-8b63-84dd6f04920e.png)
+![image](https://user-images.githubusercontent.com/4360663/32140978-d312be36-bcb6-11e7-84a4-133ab56506cd.png)
 
 ```php
 // config/config.secret.php
@@ -143,9 +143,9 @@ You can configure to automatically warm-up caches for created/updated posts usin
 $app['config.esa.webhook_secret'] = 'Secret here';
 ```
 
-#### Unrestricting access to `/webhook`
+#### Unrestricting access to `/webhook/`
 
-If you set some access restrictions on web server layer, you must unrestrict access to `/webhook` for webhook request from esa.io.
+If you set some access restrictions on web server layer, you must unrestrict access to `/webhook/` for webhook request from esa.io.
  
 For example, on Apache 2.4, config like below.
 
@@ -154,7 +154,7 @@ For example, on Apache 2.4, config like below.
     Require ip xxx.xxx.xxx.xxx
 </Location>
 
-<LocationMatch ^/(index.php|webhook)$>
+<LocationMatch ^/(index.php|webhook/?)$>
     Require all granted
 </LocationMatch>
 ```
