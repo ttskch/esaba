@@ -208,10 +208,12 @@ class HtmlHandler
         $html = $this->crawler->html();
 
         preg_match_all('/:(\w+):/', $html, $matches);
+        $names = $matches[1];
 
-        for ($i = 0; $i < count($matches[0]); $i++) {
-            $code = $matches[0][$i];
-            $replacement = sprintf('<img src="%s" class="emoji" title="%s" alt="%s">', $this->emojiManager->getImageUrl($matches[1][$i]), $code, $code);
+        for ($i = 0; $i < count($names); $i++) {
+            $name = $names[$i];
+            $code = ":${name}:";
+            $replacement = sprintf('<img src="%s" class="emoji" title="%s" alt="%s">', $this->emojiManager->getImageUrl($name), $code, $code);
 
             $html = str_replace($code, $replacement, $html);
         }
