@@ -210,6 +210,9 @@ class HtmlHandler
         preg_match_all('/:(\w+):/', $html, $matches);
         $names = $matches[1];
 
+        # remove duplicated occurrence
+        $names = array_values(array_unique($names));
+
         for ($i = 0; $i < count($names); $i++) {
             $name = $names[$i];
             $code = ":${name}:";
