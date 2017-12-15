@@ -234,6 +234,20 @@ class HtmlHandlerTest extends TestCase
         $this->SUT->replaceEmojiCodes();
     }
 
+    public function testReplaceDuplicatedEmojiCodes()
+    {
+        $code = 'emoji';
+        $imgTag = sprintf('<img src="%s" class="emoji" title=":%s:" alt=":%s:">', 'url', $code, $code);
+
+        $this->crawler->html()->willReturn(sprintf('<p>:%s::%s:</p>', $code, $code));
+        $this->crawler->clear()->shouldBeCalled();
+        $this->crawler->addHtmlContent(sprintf('<p>%s%s</p>', $imgTag, $imgTag))->shouldBeCalled();
+
+        $this->emojiManager->getImageUrl($code)->willReturn('url');
+
+        $this->SUT->replaceEmojiCodes();
+    }
+
     public function testReplaceHtml()
     {
         $this->crawler->html()->willReturn('html');
