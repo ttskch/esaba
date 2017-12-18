@@ -26,6 +26,7 @@
 もしくは
 
 - [Docker](https://www.docker.com/)
+- Docker Compose
 
 ## インストール方法
 
@@ -71,11 +72,11 @@ $ docker-compose up # 初回起動時はcompose installなどで時間がかか�
 
 ### 本番設定のサーバー起動
 
-Dockerの場合は[DockerHubのAutomated Build](https://hub.docker.com/r/kokuyouwind/esaba/)を使用して本番設定のApacheサーバを起動できます。
+Dockerの場合は[kokuyouwind/esaba:latest](https://hub.docker.com/r/kokuyouwind/esaba/)を使用して本番設定のApacheサーバを起動できます。
 
 `docker-compose.prod.yml` を使用する場合、`config`以下は名前付きボリュームになるため、`config.secret.php`を初回のみ設定することで、以降はコンテナを作り直しても設定が保持されます。
 
-```php
+```bash
 $ docker-compose -f docker-compose.prod.yml up -d
 # 以下は初回起動時のみ設定
 $ docker exec --it docker exec -it esaba_app_1 bash

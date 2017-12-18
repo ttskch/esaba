@@ -31,9 +31,10 @@ esaba hosts your markdown docs on [esa.io](https://esa.io). Url like `/post/:pos
 Or
 
 - [Docker](https://www.docker.com/)
+- Docker Compose
 
 ## Installation
-### Native Installation
+### Installation without docker
 
 ```bash
 $ composer create-project ttskch/esaba   # automatically npm install
@@ -55,7 +56,7 @@ $ cp config/config.secret.php{.placeholder,}
 $ vi config/config.secret.php   # tailor to your env
 ```
 
-Similar to Native Installation, you must to issue personal access token in advance.
+Similar to installation without docker, you must to issue personal access token in advance.
 
 ## Usage
 
@@ -65,7 +66,7 @@ Similar to Native Installation, you must to issue personal access token in advan
 $ COMPOSER_PROCESS_TIMEOUT=0 composer run
 ```
 
-If you use Docker, alternatively run below command.
+If you use Docker, alternatively run following command.
 
 ```bash
 $ docker-compose up # It take a while to install composer & npm libraries in first 
@@ -75,11 +76,11 @@ And go to http://localhost:8888/index_dev.php/post/:post_number
 
 ### Runnin in production
 
-You can run production Apache server with [DockerHub Automated Build Image](https://hub.docker.com/r/kokuyouwind/esaba/).
+You can run production Apache server with [kokuyouwind/esaba:latest](https://hub.docker.com/r/kokuyouwind/esaba/).
 
-```php
+```bash
 $ docker-compose -f docker-compose.prod.yml up -d
-# Run below only the first time
+# Run following commands only the first time
 $ docker exec --it docker exec -it esaba_app_1 bash
 $ cd /app/config
 $ cp config.secret.php.placeholder config.secret.php
