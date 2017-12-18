@@ -28,7 +28,12 @@ esaba hosts your markdown docs on [esa.io](https://esa.io). Url like `/post/:pos
 - [Composer](https://getcomposer.org/)
 - [npm](https://www.npmjs.com/)
 
+Or
+
+- [Docker](https://www.docker.com/)
+
 ## Installation
+### Native Installation
 
 ```bash
 $ composer create-project ttskch/esaba   # automatically npm install
@@ -41,6 +46,17 @@ You must to issue personal access token in advance.
 
 ![image](https://user-images.githubusercontent.com/4360663/31835239-c8ea9b60-b60b-11e7-9d83-ee40eebdfb6c.png)
 
+### Docker Installation
+
+```bash
+$ git clone git@github.com:ttskch/esaba.git
+$ cd esaba
+$ cp config/config.secret.php{.placeholder,}
+$ vi config/config.secret.php   # tailor to your env
+```
+
+Similar to Native Installation, you must to issue personal access token in advance.
+
 ## Usage
 
 ### Running in dev
@@ -49,7 +65,31 @@ You must to issue personal access token in advance.
 $ COMPOSER_PROCESS_TIMEOUT=0 composer run
 ```
 
+If you use Docker, alternatively run below command.
+
+```bash
+$ docker-compose up # It take a while to install composer & npm libraries in first 
+```
+
 And go to http://localhost:8888/index_dev.php/post/:post_number
+
+### Runnin in production
+
+You can run production Apache server with [DockerHub Automated Build Image](https://hub.docker.com/r/kokuyouwind/esaba/).
+
+```php
+$ docker-compose -f docker-compose.prod.yml up -d
+# Run below only the first time
+$ docker exec --it docker exec -it esaba_app_1 bash
+$ cd /app/config
+$ cp config.secret.php.placeholder config.secret.php
+$ vim config.secret.php
+# Write your settings
+$ exit
+```
+
+And go to http://localhost/
+
 
 ### Configuration
 
