@@ -216,9 +216,13 @@ class HtmlHandler
         for ($i = 0; $i < count($names); $i++) {
             $name = $names[$i];
             $code = ":${name}:";
-            $replacement = sprintf('<img src="%s" class="emoji" title="%s" alt="%s">', $this->emojiManager->getImageUrl($name), $code, $code);
-
-            $html = str_replace($code, $replacement, $html);
+            try {
+                $replacement = sprintf('<img src="%s" class="emoji" title="%s" alt="%s">', $this->emojiManager->getImageUrl($name), $code, $code);
+                $html = str_replace($code, $replacement, $html);
+            } catch (\LogicException $e) {
+                // オリジナルemojiや誤検出の可能性があるので無視する
+                continue;
+            }
         }
 
         $this->initialize($html);

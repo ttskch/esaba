@@ -248,6 +248,17 @@ class HtmlHandlerTest extends TestCase
         $this->SUT->replaceEmojiCodes();
     }
 
+    public function testInvalidEmojiCodes()
+    {
+        $this->crawler->html()->willReturn('<p>:invalid:</p>');
+        $this->crawler->clear()->shouldBeCalled();
+        $this->crawler->addHtmlContent('<p>:invalid:</p>')->shouldBeCalled();
+
+        $this->emojiManager->getImageUrl('invalid')->willThrow(new \LogicException());
+
+        $this->SUT->replaceEmojiCodes();
+    }
+
     public function testReplaceHtml()
     {
         $this->crawler->html()->willReturn('html');
