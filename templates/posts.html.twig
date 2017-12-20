@@ -1,0 +1,40 @@
+{% extends "layout.html.twig" %}
+{% block subtitle %}{{ path }}{% endblock %}
+
+{% block content %}
+    <h1>{{path}}</h1>
+
+    {% for post in posts %}
+        <div class="category">
+            {% for cat in post.category|split('/') %}
+                <span>{{ cat }}</span>
+                <span class="divider">/</span>
+            {% endfor %}
+        </div>
+        <div class="clearfix">
+            <h1 class="title {% if post.wip %}wip{% endif %}">
+                <span class="badge badge-pill badge-secondary mr-3 d-none">WIP</span>
+                <a href="{{url_generator.generate('post', { id: post.number })}}">
+                  {{- post.name -}}
+                </a>
+                <div class="d-inline ml-2">
+                    {%- for tag in post.tags -%}
+                        <span class="tag ml-2">#{{ tag }}</span>
+                    {%- endfor -%}
+                </div>
+            </h1>
+        </div>
+    {% endfor %}
+
+    {% if prev_page %}
+        <a href="{{url_generator.generate('posts', { path: path, page: prev_page})}}">
+            prev
+        </a>
+    {% endif %}
+
+    {% if next_page %}
+        <a href="{{url_generator.generate('posts', { path: path, page: next_page})}}">
+            next
+        </a>
+    {% endif %}
+{% endblock %}
