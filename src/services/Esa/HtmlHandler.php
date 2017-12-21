@@ -208,14 +208,9 @@ class HtmlHandler
         $html = $this->crawler->html();
 
         preg_match_all('/:(\w+):/', $html, $matches);
-        $names = $matches[1];
 
-        # remove duplicated occurrence
-        $names = array_values(array_unique($names));
-
-        for ($i = 0; $i < count($names); $i++) {
-            $name = $names[$i];
-            $code = ":${name}:";
+        foreach (array_unique($matches[1]) as $name) {
+            $code = sprintf(':%s:', $name);
             $replacement = sprintf('<img src="%s" class="emoji" title="%s" alt="%s">', $this->emojiManager->getImageUrl($name), $code, $code);
 
             $html = str_replace($code, $replacement, $html);

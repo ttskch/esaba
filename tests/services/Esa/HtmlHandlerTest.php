@@ -234,7 +234,7 @@ class HtmlHandlerTest extends TestCase
         $this->SUT->replaceEmojiCodes();
     }
 
-    public function testReplaceDuplicatedEmojiCodes()
+    public function testReplaceEmojiCodesForDuplicatedEmojis()
     {
         $code = 'emoji';
         $imgTag = sprintf('<img src="%s" class="emoji" title=":%s:" alt=":%s:">', 'url', $code, $code);
