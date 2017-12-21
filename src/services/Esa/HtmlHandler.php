@@ -207,7 +207,7 @@ class HtmlHandler
 
         $html = $this->crawler->html();
 
-        preg_match_all('/:(\w+):/', $html, $matches);
+        preg_match_all('/:([^\s:]+):/', $html, $matches);
 
         foreach (array_unique($matches[1]) as $name) {
             $code = sprintf(':%s:', $name);

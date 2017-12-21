@@ -220,9 +220,11 @@ class HtmlHandlerTest extends TestCase
         $this->assertEquals(count(array_column($replacements, 'pattern')), count(array_column($replacements, 'replacement')));
     }
 
-    public function testReplaceEmojiCodes()
+    /**
+     * @dataProvider replaceEmojiCodesDataProvider
+     */
+    public function testReplaceEmojiCodes($code)
     {
-        $code = 'emoji';
         $imgTag = sprintf('<img src="%s" class="emoji" title=":%s:" alt=":%s:">', 'url', $code, $code);
 
         $this->crawler->html()->willReturn(sprintf('<p>:%s:</p>', $code));
@@ -234,9 +236,11 @@ class HtmlHandlerTest extends TestCase
         $this->SUT->replaceEmojiCodes();
     }
 
-    public function testReplaceEmojiCodesForDuplicatedEmojis()
+    /**
+     * @dataProvider replaceEmojiCodesDataProvider
+     */
+    public function testReplaceEmojiCodesForDuplicatedEmojis($code)
     {
-        $code = 'emoji';
         $imgTag = sprintf('<img src="%s" class="emoji" title=":%s:" alt=":%s:">', 'url', $code, $code);
 
         $this->crawler->html()->willReturn(sprintf('<p>:%s::%s:</p>', $code, $code));
@@ -246,6 +250,16 @@ class HtmlHandlerTest extends TestCase
         $this->emojiManager->getImageUrl($code)->willReturn('url');
 
         $this->SUT->replaceEmojiCodes();
+    }
+
+    public function replaceEmojiCodesDataProvider()
+    {
+        return [
+            ['emoji'],
+            ['+1'],
+            ['smile_cat'],
+            ['custom-emoji_code'],
+        ];
     }
 
     public function testReplaceHtml()
