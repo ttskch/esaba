@@ -262,6 +262,29 @@ class HtmlHandlerTest extends TestCase
         ];
     }
 
+    /**
+     * @dataProvider replaceEmojiCodesForConfusablePatternDataProvider
+     */
+    public function testReplaceEmojiCodesForConfusablePattern($pattern)
+    {
+        $html = sprintf('<p>%s</p>', $pattern);
+
+        $this->crawler->html()->willReturn($html);
+        $this->crawler->clear()->shouldBeCalled();
+        $this->crawler->addHtmlContent($html)->shouldBeCalled();
+
+        $this->emojiManager->getImageUrl()->shouldNotBeCalled();
+
+        $this->SUT->replaceEmojiCodes();
+    }
+
+    public function replaceEmojiCodesForConfusablePatternDataProvider()
+    {
+        return [
+            ['<a href="https://foo/bar">https://foo/bar</a>'],  // ://foo/bar">https:
+        ];
+    }
+
     public function testReplaceHtml()
     {
         $this->crawler->html()->willReturn('html');
