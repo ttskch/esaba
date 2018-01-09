@@ -22,7 +22,7 @@ $app->get('/', function (Request $request) use ($app) {
 ;
 
 
-$app->get('/post/{id}/', function (Request $request, $id) use ($app) {
+$app->get('/posts/{id}/', function (Request $request, $id) use ($app) {
 
     $esa = $app['service.esa.proxy'];                   /** @var Proxy $esa */
     $restrictor = $app['service.access_restrictor'];    /** @var AccessRestrictor $restrictor */
