@@ -54,6 +54,7 @@ $app->get('/posts/{id}/', function (Request $request, $id) use ($app) {
 
     return $app['twig']->render('post.html.twig', [
         'post' => $post,
+        'url_generator' => $app['url_generator'],
         'toc' => $toc,
         'css' => $assetPaths['css'],
         'js' => $assetPaths['js'],
