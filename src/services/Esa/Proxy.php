@@ -23,7 +23,7 @@ class Proxy
     const CACHE_KEY_PREFIX = 'ttskch.esa.proxy';
 
     /**
-     * @param Client $client
+     * @param Api   $api
      * @param Cache $cache
      */
     public function __construct(Api $api, Cache $cache)
