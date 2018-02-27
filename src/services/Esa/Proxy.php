@@ -3,7 +3,7 @@
 namespace Ttskch\Esa;
 
 use Doctrine\Common\Cache\Cache;
-use Polidog\Esa\Client;
+use Polidog\Esa\Api;
 
 /**
  * @see https://docs.esa.io/posts/102
@@ -11,9 +11,9 @@ use Polidog\Esa\Client;
 class Proxy
 {
     /**
-     * @var Client
+     * @var Api
      */
-    private $client;
+    private $api;
 
     /**
      * @var Cache
@@ -23,12 +23,12 @@ class Proxy
     const CACHE_KEY_PREFIX = 'ttskch.esa.proxy';
 
     /**
-     * @param Client $client
+     * @param Api   $api
      * @param Cache $cache
      */
-    public function __construct(Client $client, Cache $cache)
+    public function __construct(Api $api, Cache $cache)
     {
-        $this->client = $client;
+        $this->api = $api;
         $this->cache = $cache;
     }
 
@@ -45,7 +45,7 @@ class Proxy
             return $post;
         }
 
-        $post = $this->client->post($postId);
+        $post = $this->api->post($postId);
         $this->cache->save($cacheKey, $post);
 
         return $post;
@@ -62,7 +62,7 @@ class Proxy
             return $emojis;
         }
 
-        $emojis = $this->client->emojis(['include' => 'all'])['emojis'];
+        $emojis = $this->api->emojis(['include' => 'all'])['emojis'];
         $this->cache->save($cacheKey, $emojis);
 
         return $emojis;

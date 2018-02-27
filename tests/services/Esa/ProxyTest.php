@@ -4,7 +4,7 @@ namespace Ttskch\Esa;
 
 use Doctrine\Common\Cache\Cache;
 use PHPUnit\Framework\TestCase;
-use Polidog\Esa\Client;
+use Polidog\Esa\Api;
 use Prophecy\Argument;
 
 class ProxyTest extends TestCase
@@ -29,9 +29,10 @@ class ProxyTest extends TestCase
             $cache->save(Argument::type('string'), ['new_data'])->shouldBeCalled();
         }
 
-        $client = $this->getFakePolidogEsaClient(json_encode(['new_data']));
+        $api = $this->prophesize(Api::class);
+        $api->post(Argument::type('int'))->willReturn(['new_data']);
 
-        $this->SUT = new Proxy($client, $cache->reveal());
+        $this->SUT = new Proxy($api->reveal(), $cache->reveal());
 
         $post = $this->SUT->getPost(1, $force);
 
@@ -61,9 +62,10 @@ class ProxyTest extends TestCase
             $cache->save(Argument::type('string'), ['new_data'])->shouldBeCalled();
         }
 
-        $client = $this->getFakePolidogEsaClient(json_encode(['emojis' => ['new_data']]));
+        $api = $this->prophesize(Api::class);
+        $api->emojis(['include' => 'all'])->willReturn(['emojis' => ['new_data']]);
 
-        $this->SUT = new Proxy($client, $cache->reveal());
+        $this->SUT = new Proxy($api->reveal(), $cache->reveal());
 
         $emojis = $this->SUT->getEmojis();
 
@@ -78,34 +80,4 @@ class ProxyTest extends TestCase
         ];
     }
 
-    /**
-     * \Polidog\Esa\Client is marked as final and cannot be mocked...
-     */
-    private function getFakePolidogEsaClient($json)
-    {
-        $httpClient = $this->prophesize(\GuzzleHttp\Client::class);
-        $response = $this->prophesize(\Psr\Http\Message\ResponseInterface::class);
-        $responseBody = $this->prophesize(\Psr\Http\Message\StreamInterface::class);
-
-        // mock get-post api
-        $httpClient->request(Argument::that(function($v) {
-            return strtolower($v) === 'get';
-        }), Argument::that(function($v) {
-            return preg_match('#teams/team_name/posts/\d+#', $v);
-        }))->willReturn($response->reveal());
-
-        // mock get-emojis api
-        $httpClient->request(Argument::that(function($v) {
-            return strtolower($v) === 'get';
-        }), Argument::that(function($v) {
-            return preg_match('#teams/team_name/emojis#', $v);
-        }), Argument::type('array'))->willReturn($response->reveal());
-
-        $response->getStatusCode()->willReturn(200);
-        $response->getBody()->willReturn($responseBody->reveal());
-
-        $responseBody->getContents()->willReturn($json);
-
-        return new Client('access_token', 'team_name', $httpClient->reveal());
-    }
 }

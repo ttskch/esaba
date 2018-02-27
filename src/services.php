@@ -11,10 +11,10 @@ use Ttskch\AssetResolver;
 use Ttskch\Esa\WebhookValidator;
 
 $app['service.esa.proxy'] = $app->factory(function() use ($app) {
-    $client = new Client($app['config.esa.access_token'], $app['config.esa.team_name']);
+    $api = \Polidog\Esa\Api::factory($app['config.esa.access_token'], $app['config.esa.team_name']);
     $cache = new FilesystemCache(__DIR__.'/../var/cache/esa');
 
-    return new Proxy($client, $cache);
+    return new Proxy($api, $cache);
 });
 
 $app['service.esa.html_handler'] = $app->factory(function() use ($app) {
