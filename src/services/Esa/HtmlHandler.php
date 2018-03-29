@@ -61,6 +61,60 @@ class HtmlHandler
     }
 
     /**
+     * @param array $replacements map of [regexp pattern => replacement].
+     */
+    public function replaceHtml(array $replacements)
+    {
+        $this->ensureInitialized();
+
+        $html = $this->crawler->html();
+
+        foreach ($replacements as $pattern => $replacement) {
+            $html = preg_replace($pattern, $replacement, $html);
+        }
+
+        $this->initialize($html);
+    }
+
+    /**
+     * @param array $replacements map of [regexp pattern => replacement].
+     */
+    public function replaceText(array $replacements)
+    {
+        $this->ensureInitialized();
+
+        $domNode = $this->crawler->getNode(0);
+
+        $this->walkDomNodesAndReplaceOnlyTextNodes($domNode, $replacements);
+
+        $this->crawler->clear();
+        $this->crawler->addNode($domNode);
+    }
+
+    /**
+     * @param \DOMNode $node
+     * @param array $replacements map of [regexp pattern => replacement].
+     */
+    public function walkDomNodesAndReplaceOnlyTextNodes(\DOMNode $node, array $replacements)
+    {
+        if ($node->nodeType === XML_TEXT_NODE) {
+            foreach ($replacements as $pattern => $replacement) {
+                $node->textContent = preg_replace($pattern, $replacement, $node->textContent);
+            }
+
+            return;
+        }
+
+        if (!$node->hasChildNodes()) {
+            return;
+        }
+
+        foreach ($node->childNodes as $childNode) {
+            $this->walkDomNodesAndReplaceOnlyTextNodes($childNode, $replacements);
+        }
+    }
+
+    /**
      * Replace links to other post with links to see the post on esaba.
      *
      * @param string $routeName
@@ -199,40 +253,36 @@ class HtmlHandler
     }
 
     /**
-     * Replace emoji codes with img tags.
+     * Replace emoji codes only in text content of each nodes with img tags.
      */
     public function replaceEmojiCodes()
     {
-        $this->ensureInitialized();
+        // find emoji codes.
+        preg_match_all('/:([^\s:<>\'"]+):/', $this->crawler->text(), $matches);
 
-        $html = $this->crawler->html();
-
-        preg_match_all('/:([^\s:<>\'"]+):/', $html, $matches);
-
+        $tempReplacements = [];
         foreach (array_unique($matches[1]) as $name) {
-            $code = sprintf(':%s:', $name);
-            $replacement = sprintf('<img src="%s" class="emoji" title="%s" alt="%s">', $this->emojiManager->getImageUrl($name), $code, $code);
+            $pattern = sprintf('/:%s:/', preg_quote($name));
+            $replacement = sprintf('__ESABA_IMG_TAG__%s__ESABA_IMG_TAG__', $name);
 
-            $html = str_replace($code, $replacement, $html);
+            $tempReplacements[$pattern] = $replacement;
         }
 
-        $this->initialize($html);
-    }
+        // set temporarily replaced html content.
+        $this->replaceText($tempReplacements);
 
-    /**
-     * @param array $replacements map of [regexp pattern => replacement].
-     */
-    public function replaceHtml(array $replacements)
-    {
-        $this->ensureInitialized();
+        $replacements = [];
+        foreach (array_values($tempReplacements) as $tempReplacement) {
+            preg_match('/__ESABA_IMG_TAG__(.+)__ESABA_IMG_TAG__/', $tempReplacement, $matches);
+            $name = $matches[1];
 
-        $html = $this->crawler->html();
+            $pattern = sprintf('/%s/', preg_quote($tempReplacement));
+            $replacement = sprintf('<img src="%s" class="emoji" title=":%s:" alt=":%s:">', $this->emojiManager->getImageUrl($name), $name, $name);
 
-        foreach ($replacements as $pattern => $replacement) {
-            $html = preg_replace($pattern, $replacement, $html);
+            $replacements[$pattern] = $replacement;
         }
 
-        $this->initialize($html);
+        $this->replaceHtml($replacements);
     }
 
     /**
