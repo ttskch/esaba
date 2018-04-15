@@ -4,6 +4,7 @@ namespace Ttskch\Esa;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Ttskch\Esa\Exception\UndefinedEmojiException;
 
 class HtmlHandler
 {
@@ -277,7 +278,11 @@ class HtmlHandler
             $name = $matches[1];
 
             $pattern = sprintf('/%s/', preg_quote($tempReplacement));
-            $replacement = sprintf('<img src="%s" class="emoji" title=":%s:" alt=":%s:">', $this->emojiManager->getImageUrl($name), $name, $name);
+            try {
+                $replacement = sprintf('<img src="%s" class="emoji" title=":%s:" alt=":%s:">', $this->emojiManager->getImageUrl($name), $name, $name);
+            } catch (UndefinedEmojiException $e) {
+                $replacement = sprintf(':%s:', $name);
+            }
 
             $replacements[$pattern] = $replacement;
         }
