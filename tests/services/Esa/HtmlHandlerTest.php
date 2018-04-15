@@ -7,6 +7,7 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Routing\Generator\UrlGenerator;
+use Ttskch\Esa\Exception\UndefinedEmojiException;
 
 class HtmlHandlerTest extends TestCase
 {
@@ -401,12 +402,12 @@ EOS3;
      */
     public function testReplaceEmojiCodesForConfusablePattern($pattern)
     {
-        $html = sprintf('<p>:%s:</p>', $pattern);
-        $tempHtml = sprintf('<p>:%s:</p>', $pattern);
-        $replacedHtml = sprintf('<p>:%s:</p>', $pattern);
+        $html = sprintf('<p>%s</p>', $pattern);
+        $tempHtml = $html;
+        $replacedHtml = $html;
 
         // in replaceEmojiCodes()
-        $this->crawler->text()->willReturn(sprintf(':%s:', $pattern));
+        $this->crawler->text()->willReturn(sprintf('%s', $pattern));
         $this->emojiManager->getImageUrl()->shouldNotBeCalled();
 
         // in replaceText()
@@ -431,6 +432,33 @@ EOS3;
         return [
             ['<a href="https://foo/bar">https://foo/bar</a>'],  // ://foo/bar">https:
         ];
+    }
+
+    public function testReplaceEmojiCodesWithUndefinedEmojiCode()
+    {
+        $html = '<p>:undefined:</p>';
+        $tempHtml = '<p>__ESABA_IMG_TAG__undefined__ESABA_IMG_TAG__</p>';
+        $replacedHtml = $html;
+
+        // in replaceEmojiCodes()
+        $this->crawler->text()->willReturn(':undefined:');
+        $this->emojiManager->getImageUrl('undefined')->willThrow(UndefinedEmojiException::class);
+
+        // in replaceText()
+        $this->crawler->getNode(0)->willReturn($dom = $this->createDomDocument($html));
+        $this->crawler->clear()->shouldBeCalled();
+        $this->crawler->addNode(Argument::type(\DOMNode::class))->shouldBeCalled();
+
+        // in replaceHtml()
+        $this->crawler->html()->willReturn($tempHtml);
+        $this->crawler->clear()->shouldBeCalled();
+        // final replaced html is equal to expected replacedHtml.
+        $this->crawler->addHtmlContent($replacedHtml)->shouldBeCalled();
+
+        $this->SUT->replaceEmojiCodes();
+
+        // replaced DomDocument contains tempHtml correctly.
+        $this->assertContains($tempHtml, $dom->saveHTML());
     }
 
     public function testGetToc()
