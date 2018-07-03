@@ -2,6 +2,8 @@
 
 namespace Ttskch\Esa;
 
+use Ttskch\Esa\Exception\UndefinedEmojiException;
+
 class EmojiManager
 {
     /**
@@ -32,7 +34,7 @@ class EmojiManager
             }
         }
 
-        throw new \LogicException('Undefined emoji code.');
+        throw new UndefinedEmojiException();
     }
 
     /**
