@@ -4,6 +4,7 @@ namespace Ttskch\Esa;
 
 use PHPUnit\Framework\TestCase;
 use Prophecy\Prophecy\ObjectProphecy;
+use Ttskch\Esa\Exception\UndefinedEmojiException;
 
 class EmojiManagerTest extends TestCase
 {
@@ -80,8 +81,7 @@ class EmojiManagerTest extends TestCase
 
     public function testUndefinedEmojiException()
     {
-        $this->expectException(\LogicException::class);
-        $this->expectExceptionMessage('Undefined emoji code.');
+        $this->expectException(UndefinedEmojiException::class);
 
         $this->SUT->getImageUrl('undefined_emoji');
     }

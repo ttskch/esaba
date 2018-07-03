@@ -4,6 +4,7 @@ namespace Ttskch\Esa;
 
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Ttskch\Esa\Exception\UndefinedEmojiException;
 
 class HtmlHandler
 {
@@ -58,6 +59,60 @@ class HtmlHandler
         $this->ensureInitialized();
 
         return $this->crawler->html();
+    }
+
+    /**
+     * @param array $replacements map of [regexp pattern => replacement].
+     */
+    public function replaceHtml(array $replacements)
+    {
+        $this->ensureInitialized();
+
+        $html = $this->crawler->html();
+
+        foreach ($replacements as $pattern => $replacement) {
+            $html = preg_replace($pattern, $replacement, $html);
+        }
+
+        $this->initialize($html);
+    }
+
+    /**
+     * @param array $replacements map of [regexp pattern => replacement].
+     */
+    public function replaceText(array $replacements)
+    {
+        $this->ensureInitialized();
+
+        $domNode = $this->crawler->getNode(0);
+
+        $this->walkDomNodesAndReplaceOnlyTextNodes($domNode, $replacements);
+
+        $this->crawler->clear();
+        $this->crawler->addNode($domNode);
+    }
+
+    /**
+     * @param \DOMNode $node
+     * @param array $replacements map of [regexp pattern => replacement].
+     */
+    public function walkDomNodesAndReplaceOnlyTextNodes(\DOMNode $node, array $replacements)
+    {
+        if ($node->nodeType === XML_TEXT_NODE) {
+            foreach ($replacements as $pattern => $replacement) {
+                $node->textContent = preg_replace($pattern, $replacement, $node->textContent);
+            }
+
+            return;
+        }
+
+        if (!$node->hasChildNodes()) {
+            return;
+        }
+
+        foreach ($node->childNodes as $childNode) {
+            $this->walkDomNodesAndReplaceOnlyTextNodes($childNode, $replacements);
+        }
     }
 
     /**
@@ -199,49 +254,40 @@ class HtmlHandler
     }
 
     /**
-     * Replace emoji codes with img tags.
+     * Replace emoji codes only in text content of each nodes with img tags.
      */
     public function replaceEmojiCodes()
     {
-        $this->ensureInitialized();
+        // find emoji codes.
+        preg_match_all('/:([^\s:<>\'"]+):/', $this->crawler->text(), $matches);
 
-        $html = $this->crawler->html();
+        $tempReplacements = [];
+        foreach (array_unique($matches[1]) as $name) {
+            $pattern = sprintf('/:%s:/', preg_quote($name));
+            $replacement = sprintf('__ESABA_IMG_TAG__%s__ESABA_IMG_TAG__', $name);
 
-        preg_match_all('/:(\w+):/', $html, $matches);
-        $names = $matches[1];
+            $tempReplacements[$pattern] = $replacement;
+        }
 
-        # remove duplicated occurrence
-        $names = array_values(array_unique($names));
+        // set temporarily replaced html content.
+        $this->replaceText($tempReplacements);
 
-        for ($i = 0; $i < count($names); $i++) {
-            $name = $names[$i];
-            $code = ":${name}:";
+        $replacements = [];
+        foreach (array_values($tempReplacements) as $tempReplacement) {
+            preg_match('/__ESABA_IMG_TAG__(.+)__ESABA_IMG_TAG__/', $tempReplacement, $matches);
+            $name = $matches[1];
+
+            $pattern = sprintf('/%s/', preg_quote($tempReplacement));
             try {
-                $replacement = sprintf('<img src="%s" class="emoji" title="%s" alt="%s">', $this->emojiManager->getImageUrl($name), $code, $code);
-                $html = str_replace($code, $replacement, $html);
-            } catch (\LogicException $e) {
-                // オリジナルemojiや誤検出の可能性があるので無視する
-                continue;
+                $replacement = sprintf('<img src="%s" class="emoji" title=":%s:" alt=":%s:">', $this->emojiManager->getImageUrl($name), $name, $name);
+            } catch (UndefinedEmojiException $e) {
+                $replacement = sprintf(':%s:', $name);
             }
+
+            $replacements[$pattern] = $replacement;
         }
 
-        $this->initialize($html);
-    }
-
-    /**
-     * @param array $replacements map of [regexp pattern => replacement].
-     */
-    public function replaceHtml(array $replacements)
-    {
-        $this->ensureInitialized();
-
-        $html = $this->crawler->html();
-
-        foreach ($replacements as $pattern => $replacement) {
-            $html = preg_replace($pattern, $replacement, $html);
-        }
-
-        $this->initialize($html);
+        $this->replaceHtml($replacements);
     }
 
     /**

@@ -93,6 +93,11 @@ $hr-border-color: rgba(#000,.1);
             max-width: 100%;
             vertical-align: text-bottom;
 
+            &:not(.emoji) {
+                margin: 0.5em 0;
+                box-shadow: 0 0 2em rgba($color-secondary, 0.6);;
+            }
+
             &.emoji {
                 border: none;
                 height: 1.1rem;

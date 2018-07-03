@@ -7,6 +7,7 @@ use Prophecy\Argument;
 use Prophecy\Prophecy\ObjectProphecy;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Routing\Generator\UrlGenerator;
+use Ttskch\Esa\Exception\UndefinedEmojiException;
 
 class HtmlHandlerTest extends TestCase
 {
@@ -58,9 +59,9 @@ class HtmlHandlerTest extends TestCase
     {
         return [
             ['dumpHtml'],
-            ['replaceATagWithWalker', '', function () {}],
-            ['replaceEmojiCodes'],
             ['replaceHtml', []],
+            ['replaceText', []],
+            ['replaceATagWithWalker', '', function () {}],
             ['getToc'],
         ];
     }
@@ -82,6 +83,50 @@ class HtmlHandlerTest extends TestCase
         $result = $this->SUT->dumpHtml();
 
         $this->assertEquals('html', $result);
+    }
+
+    public function testReplaceHtml()
+    {
+        $this->crawler->html()->willReturn('html');
+        $this->crawler->clear()->shouldBeCalled();
+        $this->crawler->addHtmlContent('replaced html')->shouldBeCalled();
+
+        $this->SUT->replaceHtml([
+            '/h/' => 'replaced h',
+        ]);
+    }
+
+    public function testReplaceText()
+    {
+        $html = '<p class="pattern">pattern</p>';
+        $domDocument1 = $this->createDomDocument($html);
+
+        $replacements = [
+            '/pattern/' => 'replacement',
+        ];
+
+        $domDocument2 = clone $domDocument1;
+        $this->SUT->walkDomNodesAndReplaceOnlyTextNodes($domDocument2, $replacements);
+
+        $this->crawler->getNode(0)->willReturn($domDocument1);
+        $this->crawler->clear()->shouldBeCalled();
+        $this->crawler->addNode($domDocument2)->shouldBeCalled();
+
+        $this->SUT->replaceText($replacements);
+    }
+
+    public function testWalkDomNodesAndReplaceOnlyTextNodes()
+    {
+        $html = '<p class="pattern">pattern</p>';
+        $domDocument = $this->createDomDocument($html);
+
+        $replacements = [
+            '/pattern/' => 'replacement',
+        ];
+
+        $this->SUT->walkDomNodesAndReplaceOnlyTextNodes($domDocument, $replacements);
+
+        $this->assertEquals('replacement', $domDocument->textContent);
     }
 
     /**
@@ -220,54 +265,200 @@ class HtmlHandlerTest extends TestCase
         $this->assertEquals(count(array_column($replacements, 'pattern')), count(array_column($replacements, 'replacement')));
     }
 
-    public function testReplaceEmojiCodes()
+    /**
+     * @dataProvider replaceEmojiCodesDataProvider
+     */
+    public function testReplaceEmojiCodes($code)
     {
-        $code = 'emoji';
+        $html = sprintf('<p class="ignore-me :%s:">replace-me :%s:</p>', $code, $code);
+        $tempHtml = sprintf('<p class="ignore-me :%s:">replace-me __ESABA_IMG_TAG__%s__ESABA_IMG_TAG__</p>', $code, $code);
         $imgTag = sprintf('<img src="%s" class="emoji" title=":%s:" alt=":%s:">', 'url', $code, $code);
+        $replacedHtml = sprintf('<p class="ignore-me :%s:">replace-me %s</p>', $code, $imgTag);
 
-        $this->crawler->html()->willReturn(sprintf('<p>:%s:</p>', $code));
-        $this->crawler->clear()->shouldBeCalled();
-        $this->crawler->addHtmlContent(sprintf('<p>%s</p>', $imgTag))->shouldBeCalled();
-
+        // in replaceEmojiCodes()
+        $this->crawler->text()->willReturn(sprintf('replace-me :%s:', $code));
         $this->emojiManager->getImageUrl($code)->willReturn('url');
 
+        // in replaceText()
+        $this->crawler->getNode(0)->willReturn($dom = $this->createDomDocument($html));
+        $this->crawler->clear()->shouldBeCalled();
+        $this->crawler->addNode(Argument::type(\DOMNode::class))->shouldBeCalled();
+
+        // in replaceHtml()
+        $this->crawler->html()->willReturn($tempHtml);
+        $this->crawler->clear()->shouldBeCalled();
+        // final replaced html is equal to expected replacedHtml.
+        $this->crawler->addHtmlContent($replacedHtml)->shouldBeCalled();
+
         $this->SUT->replaceEmojiCodes();
+
+        // replaced DomDocument contains tempHtml correctly.
+        $this->assertContains($tempHtml, $dom->saveHTML());
     }
 
-    public function testReplaceDuplicatedEmojiCodes()
+    /**
+     * @dataProvider replaceEmojiCodesDataProvider
+     */
+    public function testReplaceEmojiCodesForDuplicatedEmojis($code)
     {
-        $code = 'emoji';
+        $html = sprintf('<p class="ignore-me :%s:">replace-me :%s::%s:</p>', $code, $code, $code);
+        $tempHtml = sprintf('<p class="ignore-me :%s:">replace-me __ESABA_IMG_TAG__%s__ESABA_IMG_TAG____ESABA_IMG_TAG__%s__ESABA_IMG_TAG__</p>', $code, $code, $code);
         $imgTag = sprintf('<img src="%s" class="emoji" title=":%s:" alt=":%s:">', 'url', $code, $code);
+        $replacedHtml = sprintf('<p class="ignore-me :%s:">replace-me %s%s</p>', $code, $imgTag, $imgTag);
 
-        $this->crawler->html()->willReturn(sprintf('<p>:%s::%s:</p>', $code, $code));
-        $this->crawler->clear()->shouldBeCalled();
-        $this->crawler->addHtmlContent(sprintf('<p>%s%s</p>', $imgTag, $imgTag))->shouldBeCalled();
-
+        // in replaceEmojiCodes()
+        $this->crawler->text()->willReturn(sprintf('replace-me :%s:', $code));
         $this->emojiManager->getImageUrl($code)->willReturn('url');
 
+        // in replaceText()
+        $this->crawler->getNode(0)->willReturn($dom = $this->createDomDocument($html));
+        $this->crawler->clear()->shouldBeCalled();
+        $this->crawler->addNode(Argument::type(\DOMNode::class))->shouldBeCalled();
+
+        // in replaceHtml()
+        $this->crawler->html()->willReturn($tempHtml);
+        $this->crawler->clear()->shouldBeCalled();
+        // final replaced html is equal to expected replacedHtml.
+        $this->crawler->addHtmlContent($replacedHtml)->shouldBeCalled();
+
         $this->SUT->replaceEmojiCodes();
+
+        // replaced DomDocument contains tempHtml correctly.
+        $this->assertContains($tempHtml, $dom->saveHTML());
     }
 
-    public function testInvalidEmojiCodes()
+    /**
+     * @dataProvider replaceEmojiCodesDataProvider
+     */
+    public function testReplaceEmojiCodesInHeadings($code)
     {
-        $this->crawler->html()->willReturn('<p>:invalid:</p>');
-        $this->crawler->clear()->shouldBeCalled();
-        $this->crawler->addHtmlContent('<p>:invalid:</p>')->shouldBeCalled();
+        $htmlTemplate = <<<EOS1
+<body>
+    <h2 id="0-1-0" name="0-1-0">
+        <a class="anchor" id=":%s: h-text" name=":%s:%%20h-text" href="#:%s:%%20h-text">
+            <i class="fa fa-link"></i><span class="hidden" data-text="__colon__%s__colon__ h-text"> &gt; __colon__%s__colon__ h-text</span>
+        </a>:%s: h-text
+    </h2>
+</body>
+EOS1;
 
-        $this->emojiManager->getImageUrl('invalid')->willThrow(new \LogicException());
+        $tempHtmlTemplate = <<<EOS2
+<body>
+    <h2 id="0-1-0" name="0-1-0">
+        <a class="anchor" id=":%s: h-text" name=":%s:%%20h-text" href="#:%s:%%20h-text">
+            <i class="fa fa-link"></i><span class="hidden" data-text="__colon__%s__colon__ h-text"> &gt; __colon__%s__colon__ h-text</span>
+        </a>__ESABA_IMG_TAG__%s__ESABA_IMG_TAG__ h-text
+    </h2>
+</body>
+EOS2;
+
+        $replacedHtmlTemplate = <<<EOS3
+<body>
+    <h2 id="0-1-0" name="0-1-0">
+        <a class="anchor" id=":%s: h-text" name=":%s:%%20h-text" href="#:%s:%%20h-text">
+            <i class="fa fa-link"></i><span class="hidden" data-text="__colon__%s__colon__ h-text"> &gt; __colon__%s__colon__ h-text</span>
+        </a><img src="%s" class="emoji" title=":%s:" alt=":%s:"> h-text
+    </h2>
+</body>
+EOS3;
+
+        $html = preg_replace('/\n\s+/', '', sprintf($htmlTemplate, $code, $code, $code, $code, $code, $code));
+        $tempHtml = preg_replace('/\n\s+/', '', sprintf($tempHtmlTemplate, $code, $code, $code, $code, $code, $code));
+        $replacedHtml = preg_replace('/\n\s+/', '', sprintf($replacedHtmlTemplate, $code, $code, $code, $code, $code, 'url', $code, $code));
+
+        // in replaceEmojiCodes()
+        $this->crawler->text()->willReturn(sprintf('replace-me :%s:', $code));
+        $this->emojiManager->getImageUrl($code)->willReturn('url');
+
+        // in replaceText()
+        $this->crawler->getNode(0)->willReturn($dom = $this->createDomDocument($html));
+        $this->crawler->clear()->shouldBeCalled();
+        $this->crawler->addNode(Argument::type(\DOMNode::class))->shouldBeCalled();
+
+        // in replaceHtml()
+        $this->crawler->html()->willReturn($tempHtml);
+        $this->crawler->clear()->shouldBeCalled();
+        // final replaced html is equal to expected replacedHtml.
+        $this->crawler->addHtmlContent($replacedHtml)->shouldBeCalled();
 
         $this->SUT->replaceEmojiCodes();
+
+        // replaced DomDocument contains tempHtml correctly.
+        $this->assertContains($tempHtml, $dom->saveHTML());
     }
 
-    public function testReplaceHtml()
+    public function replaceEmojiCodesDataProvider()
     {
-        $this->crawler->html()->willReturn('html');
-        $this->crawler->clear()->shouldBeCalled();
-        $this->crawler->addHtmlContent('replaced html')->shouldBeCalled();
+        return [
+            ['emoji'],
+            ['+1'],
+            ['smile_cat'],
+            ['custom-emoji_code'],
+        ];
+    }
 
-        $this->SUT->replaceHtml([
-            '/h/' => 'replaced h',
-        ]);
+    /**
+     * @dataProvider replaceEmojiCodesForConfusablePatternDataProvider
+     */
+    public function testReplaceEmojiCodesForConfusablePattern($pattern)
+    {
+        $html = sprintf('<p>%s</p>', $pattern);
+        $tempHtml = $html;
+        $replacedHtml = $html;
+
+        // in replaceEmojiCodes()
+        $this->crawler->text()->willReturn(sprintf('%s', $pattern));
+        $this->emojiManager->getImageUrl()->shouldNotBeCalled();
+
+        // in replaceText()
+        $this->crawler->getNode(0)->willReturn($dom = $this->createDomDocument($html));
+        $this->crawler->clear()->shouldBeCalled();
+        $this->crawler->addNode(Argument::type(\DOMNode::class))->shouldBeCalled();
+
+        // in replaceHtml()
+        $this->crawler->html()->willReturn($tempHtml);
+        $this->crawler->clear()->shouldBeCalled();
+        // final replaced html is equal to expected replacedHtml.
+        $this->crawler->addHtmlContent($replacedHtml)->shouldBeCalled();
+
+        $this->SUT->replaceEmojiCodes();
+
+        // replaced DomDocument contains tempHtml correctly.
+        $this->assertContains($tempHtml, $dom->saveHTML());
+    }
+
+    public function replaceEmojiCodesForConfusablePatternDataProvider()
+    {
+        return [
+            ['<a href="https://foo/bar">https://foo/bar</a>'],  // ://foo/bar">https:
+        ];
+    }
+
+    public function testReplaceEmojiCodesWithUndefinedEmojiCode()
+    {
+        $html = '<p>:undefined:</p>';
+        $tempHtml = '<p>__ESABA_IMG_TAG__undefined__ESABA_IMG_TAG__</p>';
+        $replacedHtml = $html;
+
+        // in replaceEmojiCodes()
+        $this->crawler->text()->willReturn(':undefined:');
+        $this->emojiManager->getImageUrl('undefined')->willThrow(UndefinedEmojiException::class);
+
+        // in replaceText()
+        $this->crawler->getNode(0)->willReturn($dom = $this->createDomDocument($html));
+        $this->crawler->clear()->shouldBeCalled();
+        $this->crawler->addNode(Argument::type(\DOMNode::class))->shouldBeCalled();
+
+        // in replaceHtml()
+        $this->crawler->html()->willReturn($tempHtml);
+        $this->crawler->clear()->shouldBeCalled();
+        // final replaced html is equal to expected replacedHtml.
+        $this->crawler->addHtmlContent($replacedHtml)->shouldBeCalled();
+
+        $this->SUT->replaceEmojiCodes();
+
+        // replaced DomDocument contains tempHtml correctly.
+        $this->assertContains($tempHtml, $dom->saveHTML());
     }
 
     public function testGetToc()
@@ -298,5 +489,26 @@ class HtmlHandlerTest extends TestCase
             'id' => 'id',
             'text' => 'h-text',
         ], $replacements);
+    }
+
+    /**
+     * @see Crawler::addHtmlContent
+     */
+    private function createDomDocument($html)
+    {
+        $domDocument = new \DOMDocument('1.0', 'UTF-8');
+        $domDocument->validateOnParse = true;
+
+        try {
+            // Convert charset to HTML-entities to work around bugs in DOMDocument::loadHTML()
+            $html = mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8');
+        } catch (\Exception $e) {
+        }
+
+        if ('' !== trim($html)) {
+            @$domDocument->loadHTML($html);
+        }
+
+        return $domDocument;
     }
 }
