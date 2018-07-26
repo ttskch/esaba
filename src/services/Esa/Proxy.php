@@ -56,7 +56,7 @@ class Proxy
      * @return array
      */
     public function getPosts($query) {
-        return $this->client->posts($query);
+        return $this->api->posts($query);
     }
 
     /**
