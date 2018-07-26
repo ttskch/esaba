@@ -52,6 +52,14 @@ class Proxy
     }
 
     /**
+     * @param array $query
+     * @return array
+     */
+    public function getPosts($query) {
+        return $this->api->posts($query);
+    }
+
+    /**
      * @return array
      */
     public function getEmojis()

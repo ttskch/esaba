@@ -23,7 +23,14 @@
 - [Composer](https://getcomposer.org/)
 - [npm](https://www.npmjs.com/)
 
+もしくは
+
+- [Docker](https://www.docker.com/)
+- Docker Compose
+
 ## インストール方法
+
+### ネイティブインストール
 
 ```bash
 $ composer create-project ttskch/esaba   # automatically npm install
@@ -36,6 +43,17 @@ $ vi config/config.secret.php   # tailor to your env
 
 ![image](https://user-images.githubusercontent.com/4360663/31835239-c8ea9b60-b60b-11e7-9d83-ee40eebdfb6c.png)
 
+### Dockerインストール
+
+```bash
+$ git clone git@github.com:ttskch/esaba.git
+$ cd esaba
+$ cp config/config.secret.php{.placeholder,}
+$ vi config/config.secret.php   # tailor to your env
+```
+
+ネイティブインストールと同じく、事前に Personal access token を発行しておく必要があります。
+
 ## 使い方
 
 ### 開発中のローカルサーバー起動
@@ -44,7 +62,32 @@ $ vi config/config.secret.php   # tailor to your env
 $ COMPOSER_PROCESS_TIMEOUT=0 composer run
 ```
 
+Dockerの場合は以下コマンドで起動できます。
+
+```bash
+$ docker-compose up # 初回起動時はcompose installなどで時間がかかる
+```
+
 ブラウザで http://localhost:8888/index_dev.php/post/:post_number へアクセス。
+
+### 本番設定のサーバー起動
+
+Dockerの場合は[kokuyouwind/esaba:latest](https://hub.docker.com/r/kokuyouwind/esaba/)を使用して本番設定のApacheサーバを起動できます。
+
+`docker-compose.prod.yml` を使用する場合、`config`以下は名前付きボリュームになるため、`config.secret.php`を初回のみ設定することで、以降はコンテナを作り直しても設定が保持されます。
+
+```bash
+$ docker-compose -f docker-compose.prod.yml up -d
+# 以下は初回起動時のみ設定
+$ docker exec --it docker exec -it esaba_app_1 bash
+$ cd /app/config
+$ cp config.secret.php.placeholder config.secret.php
+$ vim config.secret.php
+# 設定を入力して保存
+$ exit
+```
+
+ブラウザで http://localhost/ へアクセス。
 
 ### 設定
 

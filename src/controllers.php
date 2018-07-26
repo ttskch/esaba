@@ -22,7 +22,7 @@ $app->get('/', function (Request $request) use ($app) {
 ;
 
 
-$app->get('/post/{id}/', function (Request $request, $id) use ($app) {
+$app->get('/posts/{id}/', function (Request $request, $id) use ($app) {
 
     $esa = $app['service.esa.proxy'];                   /** @var Proxy $esa */
     $restrictor = $app['service.access_restrictor'];    /** @var AccessRestrictor $restrictor */
@@ -54,6 +54,7 @@ $app->get('/post/{id}/', function (Request $request, $id) use ($app) {
 
     return $app['twig']->render('post.html.twig', [
         'post' => $post,
+        'url_generator' => $app['url_generator'],
         'toc' => $toc,
         'css' => $assetPaths['css'],
         'js' => $assetPaths['js'],
@@ -62,6 +63,29 @@ $app->get('/post/{id}/', function (Request $request, $id) use ($app) {
 ->assert('id', '\d+')
 ->bind('post')
 ;
+
+$app->get('/path/', function (Request $request) use ($app) {
+    $path = $request->get('path', null);
+    $page = $request->get('page', 1);
+    $esa = $app['service.esa.proxy'];                   /** @var Proxy $esa */
+    $restrictor = $app['service.access_restrictor'];    /** @var AccessRestrictor $restrictor */
+    $result = $esa->getPosts(["q" => "in:$path", "page" => $page]);
+    $posts = array_filter($result["posts"], function($post) use ($restrictor) {
+      return $restrictor->isPublic($post['category'], $post['tags']);
+    });
+
+    $url_generator = $app['url_generator'];
+    return $app['twig']->render('posts.html.twig', [
+        'posts' => $posts,
+        'path' => $path,
+        'url_generator' => $url_generator,
+        'prev_page' => $result['prev_page'],
+        'next_page' => $result['next_page']
+    ]);
+})
+->bind('posts')
+;
+
 
 
 $app->post('/webhook/', function (Request $request) use ($app) {

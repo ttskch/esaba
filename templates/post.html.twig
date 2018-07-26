@@ -18,8 +18,14 @@
                 </div>
 
                 <div class="category">
+                    {% set path = "" %}
                     {% for cat in post.category|split('/') %}
-                        <span>{{ cat }}</span>
+                        {% set path = path ~ "/" ~ cat %}
+                        <span>
+                          <a href="{{ url_generator.generate('posts', { path: path }) }}">
+                            {{cat}}
+                          </a>
+                        </span>
                         <span class="divider">/</span>
                     {% endfor %}
                 </div>

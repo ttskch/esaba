@@ -1,0 +1,11 @@
+version: '3'
+services:
+  app:
+    image: kokuyouwind/esaba:latest
+    ports:
+      - "80:80"
+    volumes:
+      - config:/app/config
+volumes:
+  config:
+    driver: local
