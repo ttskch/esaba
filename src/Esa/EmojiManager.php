@@ -1,32 +1,21 @@
 <?php
 
-namespace Ttskch\Esa;
+declare(strict_types=1);
 
-use Ttskch\Esa\Exception\UndefinedEmojiException;
+namespace App\Esa;
+
+use App\Esa\Exception\UndefinedEmojiException;
 
 class EmojiManager
 {
-    /**
-     * @var Proxy
-     */
-    private $esa;
-
-    /**
-     * @var array
-     */
     private $emojis;
 
-    public function __construct(Proxy $esa)
+    public function __construct(private Proxy $esa)
     {
-        $this->esa = $esa;
         $this->emojis = $this->flattenEmojis($this->esa->getEmojis());
     }
 
-    /**
-     * @param $code
-     * @return string
-     */
-    public function getImageUrl($code)
+    public function getImageUrl(string $code): string
     {
         foreach ($this->emojis as $key => $url) {
             if ($key === $code) {
@@ -37,11 +26,7 @@ class EmojiManager
         throw new UndefinedEmojiException();
     }
 
-    /**
-     * @param array $emojis
-     * @return array
-     */
-    public function flattenEmojis(array $emojis)
+    private function flattenEmojis(array $emojis): array
     {
         $flattened = [];
 

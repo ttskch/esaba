@@ -4,7 +4,14 @@ declare(strict_types=1);
 
 namespace App\Controller;
 
+use App\Esa\HtmlHandler;
+use App\Esa\Proxy;
+use App\Esa\WebhookValidator;
+use App\Service\AccessController;
+use App\Service\AssetResolver;
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -24,34 +31,39 @@ class DefaultController extends AbstractController
     }
 
     #[Route('/{id}', name: 'post', requirements: ['id' => '\d+'])]
-    public function post(string $id): Response
-    {
-        $esa = $app['service.esa.proxy'];                   /** @var Proxy $esa */
-        $restrictor = $app['service.access_restrictor'];    /** @var AccessRestrictor $restrictor */
-        $htmlHandler = $app['service.esa.html_handler'];    /** @var HtmlHandler $htmlHandler */
-        $assetResolver = $app['service.asset_resolver'];    /** @var AssetResolver $assetResolver */
+    public function post(
+        Request $request,
+        int $id,
+        Proxy $esa,
+        AccessController $accessController,
+        HtmlHandler $htmlHandler,
+        AssetResolver $assetResolver,
+        array $htmlReplacements,
+    ): Response {
         $force = boolval($request->get('force', 0));
 
         $post = $esa->getPost($id, $force);
 
-        if (!$restrictor->isPublic($post['category'], $post['tags'])) {
+        if (!$accessController->isPublic($post['category'], $post['tags'])) {
             throw new NotFoundHttpException();
         }
 
-        // fix boxy_html
-        $htmlHandler->initialize($post['body_html']);
-        $htmlHandler->replacePostUrls('post', 'id');
-        $htmlHandler->disableMentionLinks();
-        $htmlHandler->replaceEmojiCodes();
-        $htmlHandler->replaceHtml($app['config.esa.html_replacements']);
+        // fix body_html
+        $htmlHandler
+            ->initialize($post['body_html'])
+            ->replacePostUrls('post', 'id')
+            ->disableMentionLinks()
+            ->replaceEmojiCodes()
+            ->replaceHtml($htmlReplacements)
+            ->dumpHtml()
+        ;
         $post['body_html'] = $htmlHandler->dumpHtml();
-
         $toc = $htmlHandler->getToc();
 
         $assetPaths = $assetResolver->getAssetPaths($post['category'], $post['tags']);
 
         if ($force) {
-            return $app->redirect($app['url_generator']->generate('post', ['id' => $id]));
+            return $this->redirectToRoute('default_post', ['id' => $id]);
         }
 
         return $this->render('default/post.html.twig', [
@@ -63,12 +75,16 @@ class DefaultController extends AbstractController
     }
 
     #[Route('/webhook', name: 'webhook')]
-    public function webhook(Request $request): Response
-    {
+    public function webhook(
+        Request $request,
+        WebhookValidator $validator,
+        Proxy $esa,
+        LoggerInterface $logger
+    ): Response {
         $payload = $request->getContent();
         $signature = $request->headers->get('X-Esa-Signature');
 
-        if ($signature && !$app['service.esa.webhook_validator']->isValid($payload, $signature)) {
+        if ($signature && !$validator->isValid($payload, $signature)) {
             throw new NotFoundHttpException();
         }
 
@@ -77,15 +93,13 @@ class DefaultController extends AbstractController
         switch ($body['kind']) {
             case 'post_create':
             case 'post_update':
-                $app['service.esa.proxy']->getPost($body['post']['number'], true);
-                if ($app['debug']) {
-                    $app['monolog']->debug(sprintf('Cache for post %d is warmed up!', $body['post']['number']));
-                }
+                $esa->getPost($body['post']['number'], true);
+                $logger->debug(sprintf('Cache for post %d is warmed up!', $body['post']['number']));
                 break;
             default:
                 break;
         }
 
-        return new Response('OK');
+        return new JsonResponse('OK');
     }
 }

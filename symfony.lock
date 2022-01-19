@@ -47,6 +47,9 @@
     "guzzlehttp/psr7": {
         "version": "2.1.0"
     },
+    "monolog/monolog": {
+        "version": "2.3.5"
+    },
     "nikic/php-parser": {
         "version": "v4.13.2"
     },
@@ -106,6 +109,9 @@
     },
     "symfony/deprecation-contracts": {
         "version": "v3.0.0"
+    },
+    "symfony/dom-crawler": {
+        "version": "v6.0.2"
     },
     "symfony/dotenv": {
         "version": "v6.0.2"
@@ -170,6 +176,24 @@
             "version": "1.0",
             "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
         }
+    },
+    "symfony/monolog-bridge": {
+        "version": "v6.0.1"
+    },
+    "symfony/monolog-bundle": {
+        "version": "3.7",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "3.7",
+            "ref": "a7bace7dbc5a7ed5608dbe2165e0774c87175fe6"
+        },
+        "files": [
+            "config/packages/dev/monolog.yaml",
+            "config/packages/prod/deprecations.yaml",
+            "config/packages/prod/monolog.yaml",
+            "config/packages/test/monolog.yaml"
+        ]
     },
     "symfony/options-resolver": {
         "version": "v6.0.0"

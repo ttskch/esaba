@@ -1,49 +1,24 @@
 <?php
 
-namespace Ttskch\Esa;
+declare(strict_types=1);
 
+namespace App\Esa;
+
+use App\Esa\Exception\UndefinedEmojiException;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Ttskch\Esa\Exception\UndefinedEmojiException;
 
 class HtmlHandler
 {
-    /**
-     * @var Crawler
-     */
-    private $crawler;
-
-    /**
-     * @var UrlGeneratorInterface
-     */
-    private $urlGenerator;
-
-    /**
-     * @var EmojiManager
-     */
-    private $emojiManager;
-
-    /**
-     * @var string
-     */
-    private $teamName;
-
-    /**
-     * @param array $replacements
-     */
-    public function __construct(Crawler $crawler, UrlGeneratorInterface $urlGenerator, EmojiManager $emojiManager, $teamName)
-    {
-        $this->crawler = $crawler;
-        $this->urlGenerator = $urlGenerator;
-        $this->emojiManager = $emojiManager;
-        $this->teamName = $teamName;
+    public function __construct(
+        private Crawler $crawler,
+        private UrlGeneratorInterface $urlGenerator,
+        private EmojiManager $emojiManager,
+        private string $teamName,
+    ) {
     }
 
-    /**
-     * @param string $html
-     * @return $this
-     */
-    public function initialize($html)
+    public function initialize(string $html): self
     {
         $this->crawler->clear();
         $this->crawler->addHtmlContent($html);
@@ -51,10 +26,7 @@ class HtmlHandler
         return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function dumpHtml()
+    public function dumpHtml(): string
     {
         $this->ensureInitialized();
 
@@ -62,9 +34,9 @@ class HtmlHandler
     }
 
     /**
-     * @param array $replacements map of [regexp pattern => replacement].
+     * @param array $replacements map of [regexp pattern => replacement]
      */
-    public function replaceHtml(array $replacements)
+    public function replaceHtml(array $replacements): self
     {
         $this->ensureInitialized();
 
@@ -74,13 +46,13 @@ class HtmlHandler
             $html = preg_replace($pattern, $replacement, $html);
         }
 
-        $this->initialize($html);
+        return $this->initialize($html);
     }
 
     /**
-     * @param array $replacements map of [regexp pattern => replacement].
+     * @param array $replacements map of [regexp pattern => replacement]
      */
-    public function replaceText(array $replacements)
+    public function replaceText(array $replacements): self
     {
         $this->ensureInitialized();
 
@@ -90,65 +62,62 @@ class HtmlHandler
 
         $this->crawler->clear();
         $this->crawler->addNode($domNode);
+
+        return $this;
     }
 
     /**
-     * @param \DOMNode $node
-     * @param array $replacements map of [regexp pattern => replacement].
+     * @param array $replacements map of [regexp pattern => replacement]
      */
-    public function walkDomNodesAndReplaceOnlyTextNodes(\DOMNode $node, array $replacements)
+    public function walkDomNodesAndReplaceOnlyTextNodes(\DOMNode $node, array $replacements): self
     {
-        if ($node->nodeType === XML_TEXT_NODE) {
+        if (XML_TEXT_NODE === $node->nodeType) {
             foreach ($replacements as $pattern => $replacement) {
                 $node->textContent = preg_replace($pattern, $replacement, $node->textContent);
             }
 
-            return;
+            return $this;
         }
 
         if (!$node->hasChildNodes()) {
-            return;
+            return $this;
         }
 
         foreach ($node->childNodes as $childNode) {
             $this->walkDomNodesAndReplaceOnlyTextNodes($childNode, $replacements);
         }
+
+        return $this;
     }
 
     /**
      * Replace links to other post with links to see the post on esaba.
-     *
-     * @param string $routeName
-     * @param string $routeVariableName
      */
-    public function replacePostUrls($routeName, $routeVariableName)
+    public function replacePostUrls(string $routeName, string $routeVariableName): self
     {
         $backReferenceNumberForPostId = null;
         $backReferenceNumberForAnchorHash = null;
         $pattern = $this->getPostUrlPattern($backReferenceNumberForPostId, $backReferenceNumberForAnchorHash);
         $walker = $this->getATagWalkerForPostUrls($pattern, $backReferenceNumberForPostId, $backReferenceNumberForAnchorHash, $routeName, $routeVariableName);
 
-        $this->replaceATagWithWalker($pattern, $walker);
+        return $this->replaceATagWithWalker($pattern, $walker);
     }
 
     /**
      * Disable @mention links.
      */
-    public function disableMentionLinks()
+    public function disableMentionLinks(): self
     {
         $pattern = $this->getMentionLinkPattern();
         $walker = $this->getATagWalkerForMentionLinks($pattern);
 
-        $this->replaceATagWithWalker($pattern, $walker);
+        return $this->replaceATagWithWalker($pattern, $walker);
     }
 
     /**
      * Replace <a> tag href values for specified regexp pattern with closure returns map of ['pattern' => regexp pattern, 'replacement' => replacement].
-     *
-     * @param string $pattern
-     * @param \Closure $walker
      */
-    public function replaceATagWithWalker($pattern, \Closure $walker)
+    public function replaceATagWithWalker(string $pattern, \Closure $walker): self
     {
         $this->ensureInitialized();
 
@@ -156,15 +125,14 @@ class HtmlHandler
         $replacements = $targetATags->each($walker);
         $replacements = array_combine(array_column($replacements, 'pattern'), array_column($replacements, 'replacement'));
 
-        $this->replaceHtml($replacements);
+        return $this->replaceHtml($replacements);
     }
 
     /**
-     * @param string $backReferenceNumberForPostId For returning position of post id in regexp pattern.
-     * @param string $backReferenceNumberForAnchorHash For returning position of anchor hash regexp pattern.
-     * @return string
+     * @param ?int $backReferenceNumberForPostId     for returning position of post id in regexp pattern
+     * @param ?int $backReferenceNumberForAnchorHash for returning position of anchor hash regexp pattern
      */
-    public function getPostUrlPattern(&$backReferenceNumberForPostId, &$backReferenceNumberForAnchorHash)
+    public function getPostUrlPattern(?int &$backReferenceNumberForPostId, ?int &$backReferenceNumberForAnchorHash): string
     {
         $backReferenceNumberForPostId = 3;
         $backReferenceNumberForAnchorHash = 5;
@@ -172,21 +140,15 @@ class HtmlHandler
         return sprintf('#^((https?:)?//%s\.esa\.io)?/posts/(\d+)(/|/edit/?)?(\#.+)?$#', $this->teamName);
     }
 
-    /**
-     * @return string
-     */
-    public function getMentionLinkPattern()
+    public function getMentionLinkPattern(): string
     {
         return '#/members/([^\'"]+)#';
     }
 
     /**
      * Return closure reduces ATags Crawler with regexp pattern for href value.
-     *
-     * @param string $pattern
-     * @return \Closure
      */
-    public function getATagReducer($pattern)
+    public function getATagReducer(string $pattern): \Closure
     {
         $reducer = function (Crawler $node) use ($pattern) {
             preg_match($pattern, $node->attr('href'), $matches);
@@ -199,16 +161,14 @@ class HtmlHandler
 
     /**
      * Return closure returns map of ['pattern' => regexp pattern, 'replacement' => replacement] for href value of post urls.
-     *
-     * @param string $pattern
-     * @param int $backReferenceNumberForPostId
-     * @param int $backReferenceNumberForAnchorHash
-     * @param string $routeName
-     * @param string $routeVariableName
-     * @return \Closure
      */
-    public function getATagWalkerForPostUrls($pattern, $backReferenceNumberForPostId, $backReferenceNumberForAnchorHash, $routeName, $routeVariableName)
-    {
+    public function getATagWalkerForPostUrls(
+        string $pattern,
+        ?int $backReferenceNumberForPostId,
+        ?int $backReferenceNumberForAnchorHash,
+        string $routeName,
+        string $routeVariableName,
+    ): \Closure {
         $that = $this;
 
         $walker = function (Crawler $node) use ($pattern, $backReferenceNumberForPostId, $backReferenceNumberForAnchorHash, $routeName, $routeVariableName, $that) {
@@ -231,11 +191,8 @@ class HtmlHandler
 
     /**
      * Return closure returns map of ['pattern' => regexp pattern, 'replacement' => replacement] for href value of mention links.
-     *
-     * @param string $pattern
-     * @return \Closure
      */
-    public function getATagWalkerForMentionLinks($pattern)
+    public function getATagWalkerForMentionLinks(string $pattern): \Closure
     {
         $walker = function (Crawler $node) use ($pattern) {
             preg_match($pattern, $node->attr('href'), $matches);
@@ -256,7 +213,7 @@ class HtmlHandler
     /**
      * Replace emoji codes only in text content of each nodes with img tags.
      */
-    public function replaceEmojiCodes()
+    public function replaceEmojiCodes(): self
     {
         // find emoji codes.
         preg_match_all('/:([^\s:<>\'"]+):/', $this->crawler->text(), $matches);
@@ -287,15 +244,13 @@ class HtmlHandler
             $replacements[$pattern] = $replacement;
         }
 
-        $this->replaceHtml($replacements);
+        return $this->replaceHtml($replacements);
     }
 
     /**
      * Return map of ['id' => id, 'text' => text] of headings as TOC.
-     *
-     * @return array
      */
-    public function getToc()
+    public function getToc(): array
     {
         $this->ensureInitialized();
 
@@ -306,10 +261,8 @@ class HtmlHandler
 
     /**
      * Return closure returns map of ['id' => id, 'text' => text] of h tags.
-     *
-     * @return \Closure
      */
-    public function getWalkerForToc()
+    public function getWalkerForToc(): \Closure
     {
         $walker = function (Crawler $node) {
             return [
@@ -321,7 +274,7 @@ class HtmlHandler
         return $walker;
     }
 
-    private function ensureInitialized()
+    private function ensureInitialized(): void
     {
         if (!$this->crawler->count()) {
             throw new \LogicException('Initialize before using.');
