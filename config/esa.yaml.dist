@@ -20,10 +20,10 @@ parameters:
   ]
 
   esaba.html_replacements:
-#    - { /regex pattern/: replacement }
-    - { /target=('|")_blank\1/: '' }
+    # /regex pattern/: replacement
+    /target=('|")_blank\1/: ''
 
-  esaba.assets:
+  esaba.asset_configs:
     # if post matches multiple conditions, tag based condition overwrites category based condition.
     # if post matches multiple category based conditions, condition based deeper category is enabled.
     # if post matches multiple tag based conditions, anyone is arbitrarily enabled.

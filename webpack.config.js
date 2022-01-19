@@ -1,119 +1,97 @@
-const path = require('path');
-const klaw = require('klaw-sync');
+const Encore = require('@symfony/webpack-encore');
 
-const ProvidePlugin = require('webpack/lib/ProvidePlugin');
-const CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
-const UglifyJsPlugin = require('webpack/lib/optimize/UglifyJsPlugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-
-const isProd = process.env.NODE_ENV === 'production';
-
-let plugins = [
-    new ProvidePlugin({
-        $: 'jquery',
-        jQuery: 'jquery',
-        'window.jQuery': 'jquery',
-        Popper: ['popper.js', 'default'],
-    }),
-    new CommonsChunkPlugin({
-        name: 'vendors',
-        chunks: ['main', 'post/default'],
-        minChunks: Infinity,
-    }),
-    new ExtractTextPlugin({
-        filename: 'css/[name].css',
-        allChunks: true,
-    }),
-];
-
-if (isProd) {
-    plugins = plugins.concat([
-        new UglifyJsPlugin(),
-    ]);
+// Manually configure the runtime environment if not already configured yet by the "encore" command.
+// It's useful when you use tools that rely on webpack.config.js file.
+if (!Encore.isRuntimeEnvironmentConfigured()) {
+  Encore.configureRuntimeEnvironment(process.env.NODE_ENV || 'dev');
 }
 
-let entries = {
-    'main': [
-        './assets/js/main.js',
-        './assets/scss/main.scss',
-    ],
-    'vendors': [
-        './assets/js/vendors.js',
-        './assets/scss/vendors.scss',
-    ],
-};
+Encore
+  // directory where compiled assets will be stored
+  .setOutputPath('public/build/')
+  // public path used by the web server to access the output path
+  .setPublicPath('/build')
+  // only needed for CDN's or sub-directory deploy
+  //.setManifestKeyPrefix('build/')
 
-let files = klaw('./assets/post', {
-    nodir: true,
-    filter: file => ['.js', '.scss'].indexOf(path.extname(file.path)) !== -1
-});
+  /*
+   * ENTRY CONFIG
+   *
+   * Each entry will result in one JavaScript file (e.g. app.js)
+   * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
+   */
+  .addEntry('app', [
+    './assets/js/app.js',
+  ])
+  .addEntry('vendors', [
+    // js
+    'jquery',
+    'bootstrap',
+    'popper.js',
+    // styles
+    './assets/scss/vendors.scss',
+  ])
 
-files.forEach(file => {
-    let relativePath = path.relative('./assets', file.path);
-    let key = relativePath.replace(new RegExp(path.extname(file.path)), '');
-    if (entries.hasOwnProperty(key)) {
-        entries[key].push(file.path);
-    } else {
-        entries[key] = [file.path];
-    }
-});
+  // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
+  .enableStimulusBridge('./assets/controllers.json')
 
-module.exports = {
-    entry: entries,
-    output: {
-        path: path.resolve(__dirname, './web'),
-        filename: 'js/[name].js',
-    },
-    module: {
-        rules: [
-            {
-                test: /\.js$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {presets: ['es2015']},
-                },
-            },
-            {
-                test: /\.scss$/,
-                use: ExtractTextPlugin.extract({
-                    fallback: 'style-loader',
-                    use: [
-                        'css-loader',
-                        {
-                            loader: 'postcss-loader',
-                            options: {
-                                plugins: () => {
-                                    return [
-                                        require('precss'),  // bootstrap4 requires this
-                                        require('autoprefixer')({ browsers: ['last 2 versions'] }),
-                                    ];
-                                },
-                            },
-                        },
-                        {
-                            loader: 'sass-loader',
-                        },
-                    ],
-                }),
-            },
-            {
-                // for font-awesome
-                test: /\.(ttf|otf|eot|svg|woff2?)$/,
-                use: {
-                    loader: 'file-loader',
-                    options: {
-                        name: '[name].[ext]',
-                        outputPath: 'fonts/',
-                        publicPath: '../',
-                    },
-                },
-            },
-        ],
-    },
-    devtool: isProd ? 'source-map' : 'inline-source-map',
-    plugins: plugins,
-    resolve: {
-        symlinks: false,
-    }
-};
+  // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
+  .splitEntryChunks()
+
+  // will require an extra script tag for runtime.js
+  // but, you probably want this, unless you're building a single-page app
+  .enableSingleRuntimeChunk()
+
+  /*
+   * FEATURE CONFIG
+   *
+   * Enable & configure other features below. For a full
+   * list of features, see:
+   * https://symfony.com/doc/current/frontend.html#adding-more-features
+   */
+  .cleanupOutputBeforeBuild()
+  .enableBuildNotifications()
+  .enableSourceMaps(!Encore.isProduction())
+  // enables hashed filenames (e.g. app.abc123.css)
+  .enableVersioning(Encore.isProduction())
+
+  .configureBabel((config) => {
+    config.plugins.push('@babel/plugin-proposal-class-properties');
+  })
+
+  // enables @babel/preset-env polyfills
+  .configureBabelPresetEnv((config) => {
+    config.useBuiltIns = 'usage';
+    config.corejs = 3;
+  })
+
+  // enables Sass/SCSS support
+  .enableSassLoader()
+
+  // uncomment if you use TypeScript
+  //.enableTypeScriptLoader()
+
+  // uncomment if you use React
+  //.enableReactPreset()
+
+  // uncomment to get integrity="..." attributes on your script & link tags
+  // requires WebpackEncoreBundle 1.4 or higher
+  //.enableIntegrityHashes(Encore.isProduction())
+
+  // uncomment if you're having problems with a jQuery plugin
+  .autoProvidejQuery()
+
+  /*
+   * Other configs
+   */
+  .autoProvideVariables({
+    Popper: ['popper.js', 'default'],
+  })
+  .enablePostCssLoader()
+  .copyFiles({
+    from: './assets/statics/',
+    to: '/[path][name].[ext]',
+  })
+;
+
+module.exports = Encore.getWebpackConfig();

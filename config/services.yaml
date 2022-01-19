@@ -15,6 +15,7 @@ services:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
         bind:
+            string $teamName: '%esa.team_name%'
             array $htmlReplacements: '%esaba.html_replacements%'
 
     # makes classes in src/ available to be used as services
@@ -41,6 +42,8 @@ services:
         arguments:
             $directory: '%kernel.project_dir%/var/cache/esa'
 
+    Symfony\Component\DomCrawler\Crawler: ~
+
     App\Service\AccessController:
         arguments:
             - '%esaba.public_categories%'
@@ -50,4 +53,4 @@ services:
 
     App\Service\AssetResolver:
         arguments:
-            - '%esaba.assets%'
+            - '%esaba.asset_configs%'

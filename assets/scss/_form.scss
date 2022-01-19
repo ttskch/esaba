@@ -1,28 +1,61 @@
-@import "variables";
+@import 'variables';
 
-.form-group > label {
-    &.required {
-        &:after {
-            content: " *";
-            color: $color-danger;
-        }
+.form-group {
+  > label,
+  > .col-form-label,
+  // for horizontal
+  > .row > .col-form-label {
+    font-weight: bolder;
+
+    &.required:after {
+      content: "required";
+      margin-left: 0.8em;
+      font-size: 0.5em;
+      font-weight: normal;
+      padding: 0.3em 0.5em;
+      border-radius: 3px;
+      color: $white;
+      background-color: $danger;
     }
+  }
+
+  // beautify inline checkboxes/radios
+  .form-check-inline {
+    margin-top: 0.4em;
+
+    > .form-check:first-child {
+      padding-left: 0;
+    }
+  }
+
+  .custom-file-label {
+    color: $text-muted;
+    overflow: hidden;
+    &:after {
+      // uncomment and tweak to change 'Browse' label
+      //content: 'Browse files' !important;
+    }
+  }
+
+  .invalid-feedback {
+    margin-bottom: 0.5em;
+  }
 }
 
-.form-control.form-control-unstyled {
-    padding: 0;
-    border: none;
-
-    .form-check.form-check-inline {
-        margin-bottom: 0;
-        margin-top: 0.2rem;
+// beautify checkboxes/radios in Japanese environment
+html[lang="ja"] {
+  .form-group {
+    .form-check {
+      input[type="checkbox"] {
+        margin-top: 0.23rem;
+      }
     }
-
-    &.is-invalid {
-        color: $color-danger;
+    .form-check-inline {
+      .form-check {
+        input[type="checkbox"] {
+          margin-top: 0;
+        }
+      }
     }
-
-    &.is-valid {
-        color: $color-success;
-    }
+  }
 }

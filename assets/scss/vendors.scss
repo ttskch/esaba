@@ -1,5 +1,9 @@
-$fa-font-path: "~font-awesome/fonts";
+// customize bootstrap
+//$font-size-base: 1rem;
+$body-color: #495057; // $gray-700
+$text-muted: #6c757d; // $gray-600
 
-@import "~bootstrap/scss/bootstrap";
-@import "~font-awesome/scss/font-awesome";
-@import "~select2/dist/css/select2";
+@import '~bootstrap/scss/bootstrap';
+@import '~@fortawesome/fontawesome-free/css/all.css';
+@import '~select2/dist/css/select2';
+@import '~@ttskch/select2-bootstrap4-theme/dist/select2-bootstrap4.css';

@@ -12,12 +12,12 @@ class AssetResolver
     private array $categoryBasedConfig;
     private array $tagBasedConfig;
 
-    public function __construct(array $config)
+    public function __construct(?array $config)
     {
         $this->categoryBasedConfig = [];
         $this->tagBasedConfig = [];
 
-        foreach ($config as $key => $value) {
+        foreach ((array) $config as $key => $value) {
             if (0 === strpos($key, '#')) {
                 $this->tagBasedConfig[$key] = $value;
             } else {
@@ -29,7 +29,7 @@ class AssetResolver
         krsort($this->categoryBasedConfig, SORT_NATURAL);
     }
 
-    public function getAssetPaths(string $category, array $tags): array
+    public function getAssetPaths(?string $category, array $tags): array
     {
         $assetPaths = [
             'css' => self::DEFAULT_CSS_PATH,
@@ -42,11 +42,11 @@ class AssetResolver
         return array_merge($assetPaths, $categoryBasedAssetPaths, $tagBasedAssetPaths);
     }
 
-    public function getCategoryBasedAssetPaths(string $category): array
+    public function getCategoryBasedAssetPaths(?string $category): array
     {
         foreach ($this->categoryBasedConfig as $matcher => $paths) {
-            if (preg_match(sprintf('#^%s#', $matcher), $category)) {
-                return $paths;  // deeper category should match early.
+            if (preg_match(sprintf('#^%s#', $matcher), (string) $category)) {
+                return $paths; // deeper category should match early.
             }
         }
 

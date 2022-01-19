@@ -1,0 +1,42 @@
+{% use 'bootstrap_4_layout.html.twig' %}
+
+{# disappear form_errors in label #}
+{% block form_label_errors %}{% endblock %}
+
+{# override to enable to show label with form_label block instead of form_label function and add form_errors #}
+{% block form_row -%}
+  {%- if compound is defined and compound -%}
+    {%- set element = 'fieldset' -%}
+  {%- endif -%}
+  {%- set widget_attr = {} -%}
+  {%- if help is not empty -%}
+    {%- set widget_attr = {attr: {'aria-describedby': id ~"_help"}} -%}
+  {%- endif -%}
+  <{{ element|default('div') }}{% with {attr: row_attr|merge({class: (row_attr.class|default('') ~ ' form-group')|trim})} %}{{ block('attributes') }}{% endwith %}>
+
+  {# fixed this line #}
+  {% if label_attr.value is defined %}
+    {{ block('form_label') }}
+  {% else %}
+    {{- form_label(form) -}}
+  {% endif %}
+
+  {# added this line #}
+  {{- form_errors(form) -}}
+
+  {# fixed this line #}
+  <div class="d-block">
+    {{- form_widget(form, widget_attr) -}}
+  </div>
+
+  {{- form_help(form) -}}
+  </{{ element|default('div') }}>
+{%- endblock form_row %}
+
+{# override to enable to control label for checkbox item with label_attr.value #}
+{% block checkbox_radio_label -%}
+  {% if label_attr.value is defined %}
+    {% set label = label_attr.value %}
+  {% endif %}
+  {{ parent() }}
+{%- endblock checkbox_radio_label %}

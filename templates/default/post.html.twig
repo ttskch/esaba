@@ -4,7 +4,7 @@
 
 {% block navbar_brand_url %}{{ path('default_post', { id: post.number }) }}{% endblock %}
 
-{% block content %}
+{% block content_container %}
   <div class="row">
     <div id="esa-content" class="col-lg-9">
       <div id="esa-content-header">
@@ -68,12 +68,14 @@
   </div>
 {% endblock %}
 
-{% block style_sheets %}
+{% block stylesheets %}
+  {{ parent() }}
   <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
   <link href="{{ asset(css) }}" rel="stylesheet">
 {% endblock %}
 
-{% block scripts %}
+{% block javascripts %}
+  {{ parent() }}
   <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
   <script>hljs.initHighlightingOnLoad();</script>
   <script src="{{ asset(js) }}"></script>

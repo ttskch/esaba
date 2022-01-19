@@ -1,0 +1,53 @@
+{% use 'bootstrap_4_horizontal_layout.html.twig' %}
+
+{# disappear form_errors in label #}
+{% block form_label_errors %}{% endblock %}
+
+{# override just to add form_errors #}
+{% block form_row -%}
+  {%- if expanded is defined and expanded -%}
+    {{ block('fieldset_form_row') }}
+  {%- else -%}
+    {%- set widget_attr = {} -%}
+    {%- if help is not empty -%}
+      {%- set widget_attr = {attr: {'aria-describedby': id ~"_help"}} -%}
+    {%- endif -%}
+    <div{% with {attr: row_attr|merge({class: (row_attr.class|default('') ~ ' form-group row' ~ ((not compound or force_error|default(false)) and not valid ? ' is-invalid'))|trim})} %}{{ block('attributes') }}{% endwith %}>
+      {{- form_label(form) -}}
+      <div class="{{ block('form_group_class') }}">
+
+        {# just added this line #}
+        {{- form_errors(form) -}}
+
+        {{- form_widget(form, widget_attr) -}}
+        {{- form_help(form) -}}
+      </div>
+      {##}</div>
+  {%- endif -%}
+{%- endblock form_row %}
+
+{# override to enable to show label column in checkbox row #}
+{% block checkbox_row -%}
+  <div{% with {attr: row_attr|merge({class: (row_attr.class|default('') ~ ' form-group row')|trim})} %}{{ block('attributes') }}{% endwith %}>{#--#}
+
+    {# just fix this line #}
+    {% if label_attr.value is defined %}
+      {{ block('form_label') }}
+    {% else %}
+    <div class="{{ block('form_label_class') }}"></div>{#--#}
+    {% endif %}
+
+    <div class="{{ block('form_group_class') }}">
+      {{- form_widget(form) -}}
+      {{- form_help(form) -}}
+    </div>{#--#}
+  </div>
+{%- endblock checkbox_row %}
+
+{# override to enable tocontrol label for checkbox item with label_attr.value #}
+{% block checkbox_radio_label -%}
+  {% if label_attr.value is defined %}
+    {% set label = label_attr.value %}
+  {% endif %}
+  {{ parent() }}
+{%- endblock checkbox_radio_label %}

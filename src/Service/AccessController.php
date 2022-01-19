@@ -7,14 +7,14 @@ namespace App\Service;
 class AccessController
 {
     public function __construct(
-        private array $publicCategories = [],
-        private array $publicTags = [],
-        private array $privateCategories = [],
-        private array $privateTags = [],
+        private array $publicCategories,
+        private array $publicTags,
+        private array $privateCategories,
+        private array $privateTags,
     ) {
     }
 
-    public function isPublic(string $category, array $tags): bool
+    public function isPublic(?string $category, array $tags): bool
     {
         if ($this->matchesPrivateConditions($category, $tags)) {
             return false;
@@ -28,12 +28,12 @@ class AccessController
         return $this->categoryIsUnderOneOf($category, $this->publicCategories) || $this->atLeastOneTagIsIn($tags, $this->publicTags);
     }
 
-    private function matchesPrivateConditions(string $category, array $tags): bool
+    private function matchesPrivateConditions(?string $category, array $tags): bool
     {
         return $this->categoryIsUnderOneOf($category, $this->privateCategories) || $this->atLeastOneTagIsIn($tags, $this->privateTags);
     }
 
-    private function categoryIsUnderOneOf(string $needle, array $haystacks): bool
+    private function categoryIsUnderOneOf(?string $needle, array $haystacks): bool
     {
         foreach ($haystacks as $haystack) {
             if (preg_match(sprintf('#^%s#', $haystack), $needle)) {
