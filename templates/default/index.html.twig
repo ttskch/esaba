@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}esaba - Host your markdown docs on esa.io with your own css.{% endblock %}
+
+{% block content %}
+  <div class="text-center" style="padding-top:25vh;">
+    <h1>esaba</h1>
+    <p class="mb-5">{{ block('title')|replace({'esaba - ': ''}) }}</p>
+
+    <form method="get" action="{{ path('default_index') }}" class="form-inline col-sm-3 mx-auto">
+      <div class="form-group">
+        <input type="number" min="1" name="post_id" class="form-control mr-2" placeholder="Post ID" autofocus>
+        <button type="submit" class="btn btn-outline-primary">Show</button>
+      </div>
+    </form>
+  </div>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends 'base.html.twig' %}
+
+{% block subtitle %}{{ post.full_name }}{% endblock %}
+
+{% block navbar_brand_url %}{{ path('default_post', { id: post.number }) }}{% endblock %}
+
+{% block content %}
+  <div class="row">
+    <div id="esa-content" class="col-lg-9">
+      <div id="esa-content-header">
+        <div class="actions">
+          <a href="{{ path('default_post', { id: post.number, force: 1 }) }}" class="btn btn-sm btn-outline-secondary" data-toggle="tooltip" data-placement="top" title="記事を再取得">
+            <i class="fa fa-refresh"></i>
+          </a>
+          <a href="{{ post.url }}/edit" target="_blank" class="btn btn-sm btn-outline-secondary" data-toggle="tooltip" data-placement="top" title="元記事を編集">
+            <i class="fa fa-pencil"></i>
+          </a>
+        </div>
+
+        <div class="category">
+          {% for cat in post.category|split('/') %}
+            <span>{{ cat }}</span>
+            <span class="divider">/</span>
+          {% endfor %}
+        </div>
+
+        <div class="clearfix">
+          <h1 class="title {% if post.wip %}wip{% endif %}">
+            <span class="badge badge-pill badge-secondary mr-3 d-none">WIP</span>
+            {{- post.name -}}
+            <div class="d-inline ml-2">
+              {%- for tag in post.tags -%}
+                <span class="tag ml-2">#{{ tag }}</span>
+              {%- endfor -%}
+            </div>
+          </h1>
+        </div>
+
+        <div class="updated-at">
+          <i class="fa fa-clock-o"></i> Updated at {{ post.updated_at|date('Y/m/d H:i:s') }}
+        </div>
+      </div>
+
+      <hr class="mb-5">
+
+      <div id="esa-content-body">
+        {% autoescape %}
+          {{ post.body_html|raw }}
+        {% endautoescape %}
+      </div>
+    </div>
+    <div id="side-nav" class="col">
+      {% if toc|length %}
+        <h6 class="mb-0"><i class="fa fa-align-left"></i> Index</h6>
+        <div id="toc-wrapper" class="d-none d-lg-block py-3">
+          <div id="toc-box">
+            <ul class="small">
+              {% for h in toc %}
+                <li class="toc-{{ h.id }}">
+                  <a href="#{{ h.id }}">{{ h.text }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
+
+{% block style_sheets %}
+  <link href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css" rel="stylesheet">
+  <link href="{{ asset(css) }}" rel="stylesheet">
+{% endblock %}
+
+{% block scripts %}
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <script src="{{ asset(js) }}"></script>
+{% endblock %}
