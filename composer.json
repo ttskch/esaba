@@ -2,64 +2,73 @@
     "name": "ttskch/esaba",
     "description": "Host your markdown docs on esa.io with your own css.",
     "keywords": ["esa", "esa.io", "markdown", "css", "scss"],
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Takashi Kanemoto",
-            "email": "kanemoto.takashi@gmail.com"
-        }
-    ],
     "type": "project",
+    "license": "MIT",
+    "minimum-stability": "stable",
+    "prefer-stable": true,
     "require": {
-        "php": ">=5.6",
-        "silex/silex": "~2.0",
-        "silex/web-profiler": "~2.0",
-        "symfony/asset": "~2.8|^3.0",
-        "symfony/browser-kit": "~2.8|^3.0",
-        "symfony/class-loader": "~2.8|^3.0",
-        "symfony/config": "~2.8|^3.0",
-        "symfony/console": "~2.8|^3.0",
-        "symfony/css-selector": "~2.8|^3.0",
-        "symfony/debug": "~2.8|^3.0",
-        "symfony/finder": "~2.8|^3.0",
-        "symfony/form": "~2.8|^3.0",
-        "symfony/monolog-bridge": "~2.8|^3.0",
-        "symfony/process": "~2.8|^3.0",
-        "symfony/security": "~2.8|^3.0",
-        "symfony/translation": "~2.8|^3.0",
-        "symfony/twig-bridge": "~2.8|^3.0",
-        "symfony/validator": "~2.8|^3.0",
-        "polidog/esa-php": "^2.0",
-        "doctrine/cache": "^1.6",
-        "twig/twig": "^1.35",
-        "symfony/dom-crawler": "^3.3"
+        "php": ">=8.0.2",
+        "ext-ctype": "*",
+        "ext-iconv": "*",
+        "symfony/console": "6.0.*",
+        "symfony/dotenv": "6.0.*",
+        "symfony/flex": "^2",
+        "symfony/framework-bundle": "6.0.*",
+        "symfony/runtime": "6.0.*",
+        "symfony/yaml": "6.0.*",
+        "polidog/esa-php": "^2.0"
     },
-    "require-dev": {
-        "phpunit/phpunit": "^5.7"
+    "config": {
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true,
+            "symfony/flex": true,
+            "symfony/runtime": true
+        },
+        "optimize-autoloader": true,
+        "preferred-install": {
+            "*": "dist"
+        },
+        "sort-packages": true
     },
     "autoload": {
-        "psr-4": { "Ttskch\\": "src/services" }
-    },
-    "autoload-dev": {
-        "psr-4": { "Ttskch\\": "tests/services" }
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "1.0.x-dev"
+        "psr-4": {
+            "App\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\Tests\\": "tests/"
+        }
+    },
+    "replace": {
+        "symfony/polyfill-ctype": "*",
+        "symfony/polyfill-iconv": "*",
+        "symfony/polyfill-php72": "*",
+        "symfony/polyfill-php73": "*",
+        "symfony/polyfill-php74": "*",
+        "symfony/polyfill-php80": "*"
+    },
     "scripts": {
-        "run": [
-            "echo 'Started web server on http://localhost:8888'",
-            "php -S localhost:8888 -t web"
+        "auto-scripts": {
+            "cache:clear": "symfony-cmd",
+            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+        },
+        "post-install-cmd": [
+            "@auto-scripts"
         ],
-        "build": "npm run build",
-        "watch": "npm run watch",
-        "build-prod": "NODE_ENV=production npm run build",
+        "post-update-cmd": [
+            "@auto-scripts"
+        ],
         "test": "./vendor/bin/phpunit",
-        "coverage": "./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage",
-        "post-install-cmd": "npm install",
-        "post-update-cmd": "npm install",
-        "post-create-project-cmd": "npm install"
+        "coverage": "./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage"
+    },
+    "conflict": {
+        "symfony/symfony": "*"
+    },
+    "extra": {
+        "symfony": {
+            "allow-contrib": false,
+            "require": "6.0.*"
+        }
     }
 }

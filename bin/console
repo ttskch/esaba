@@ -1,16 +1,17 @@
 #!/usr/bin/env php
 <?php
 
-require_once __DIR__.'/../vendor/autoload.php';
+use App\Kernel;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
 
-set_time_limit(0);
+if (!is_file(dirname(__DIR__).'/vendor/autoload_runtime.php')) {
+    throw new LogicException('Symfony Runtime is missing. Try running "composer require symfony/runtime".');
+}
 
-use Symfony\Component\Console\Input\ArgvInput;
+require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
 
-$input = new ArgvInput();
-$env = $input->getParameterOption(array('--env', '-e'), getenv('SYMFONY_ENV') ?: 'dev');
+return function (array $context) {
+    $kernel = new Kernel($context['APP_ENV'], (bool) $context['APP_DEBUG']);
 
-$app = require __DIR__.'/../src/app.php';
-require __DIR__.'/../config/'.$env.'.php';
-$console = require __DIR__.'/../src/console.php';
-$console->run();
+    return new Application($kernel);
+};
