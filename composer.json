@@ -60,6 +60,8 @@
         "post-update-cmd": [
             "@auto-scripts"
         ],
+        "cs": "./vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php --dry-run --diff -v src tests",
+        "cs-fix": "./vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php src tests",
         "test": "./vendor/bin/phpunit",
         "coverage": "./vendor/bin/phpunit --coverage-text --coverage-html=build/coverage"
     },
@@ -73,6 +75,7 @@
         }
     },
     "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.5",
         "symfony/maker-bundle": "^1.36"
     }
 }
