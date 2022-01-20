@@ -132,6 +132,9 @@ $sidenav-top: $body-padding-top + $content-padding-top;
 
     code {
       color: $color-text;
+      background-color: $color-light;
+      padding: 0.3em;
+      border-radius: $border-radius;
     }
 
     .code-block {
