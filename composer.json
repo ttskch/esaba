@@ -92,6 +92,9 @@
     },
     "require-dev": {
         "friendsofphp/php-cs-fixer": "^3.5",
-        "symfony/maker-bundle": "^1.36"
+        "phpunit/phpunit": "^9.5",
+        "symfony/browser-kit": "6.0.*",
+        "symfony/maker-bundle": "^1.36",
+        "symfony/phpunit-bridge": "^6.0"
     }
 }
