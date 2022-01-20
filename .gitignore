@@ -3,6 +3,7 @@ composer.lock
 /components/
 node_modules
 package-lock.json
+yarn.lock
 build
 config/esa.yaml
 
