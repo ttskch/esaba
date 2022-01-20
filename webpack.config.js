@@ -31,6 +31,10 @@ Encore
     // styles
     './assets/scss/vendors.scss',
   ])
+  .addEntry('default', [
+    './assets/post/default.js',
+    './assets/post/default.scss',
+  ])
 
   // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
   .enableStimulusBridge('./assets/controllers.json')

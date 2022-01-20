@@ -1,8 +1,11 @@
+@import '../scss/variables';
+
 $color-muted: #868e96;
 $color-secondary: #868e96;
 $color-text: #212529;
 $color-light: #f8f9fa;
 $hr-border-color: rgba(#000,.1);
+$sidenav-top: $body-padding-top + $content-padding-top;
 
 #esa-content {
 
@@ -190,31 +193,37 @@ $hr-border-color: rgba(#000,.1);
     }
 }
 
-#toc-wrapper {
-    h6 {
-        margin-bottom: 1em;
-    }
+#side-nav {
+    position: sticky;
+    top: $sidenav-top;
+    height: 100%;
 
-    #toc-box {
-        border-left: 4px solid $color-secondary;
-        padding: 0.5em 0;
-        padding-left: 1em;
+    #toc-wrapper {
+        h6 {
+            margin-bottom: 1em;
+        }
 
-        ul {
-            padding-left: 1.5em;
-            margin-bottom: 0;
+        #toc-box {
+            border-left: 4px solid $color-secondary;
+            padding: 0.5em 0;
+            padding-left: 1em;
 
-            li {
-                margin: 0.5em 0;
+            ul {
+                padding-left: 1.5em;
+                margin-bottom: 0;
 
-                &[class^='toc-'] {
-                    &[class$='-0-0'] { // h1
-                    }
-                    &:not([class$='-0-0'])[class$='-0'] { // h2
-                        margin-left: 1em;
-                    }
-                    &:not([class$='-0']) { // h3
-                        margin-left: 2em;
+                li {
+                    margin: 0.5em 0;
+
+                    &[class^='toc-'] {
+                        &[class$='-0-0'] { // h1
+                        }
+                        &:not([class$='-0-0'])[class$='-0'] { // h2
+                            margin-left: 1em;
+                        }
+                        &:not([class$='-0']) { // h3
+                            margin-left: 2em;
+                        }
                     }
                 }
             }

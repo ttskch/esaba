@@ -6,8 +6,8 @@ namespace App\Service;
 
 class AssetResolver
 {
-    public const DEFAULT_CSS_PATH = 'css/post/default.css';
-    public const DEFAULT_JS_PATH = 'js/post/default.js';
+    public const DEFAULT_CSS_PATH = 'build/default.css';
+    public const DEFAULT_JS_PATH = 'build/default.js';
 
     private array $categoryBasedConfig;
     private array $tagBasedConfig;

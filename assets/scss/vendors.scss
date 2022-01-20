@@ -1,7 +1,13 @@
 // customize bootstrap
 //$font-size-base: 1rem;
-$body-color: #495057; // $gray-700
+$body-color: #444;
 $text-muted: #6c757d; // $gray-600
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1280px // changed from 1140px
+) !default;
 
 @import '~bootstrap/scss/bootstrap';
 @import '~@fortawesome/fontawesome-free/css/all.css';
