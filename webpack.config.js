@@ -1,4 +1,5 @@
 const Encore = require('@symfony/webpack-encore');
+const fs = require('fs');
 
 // Manually configure the runtime environment if not already configured yet by the "encore" command.
 // It's useful when you use tools that rely on webpack.config.js file.
@@ -32,8 +33,8 @@ Encore
     './assets/scss/vendors.scss',
   ])
   .addEntry('default', [
-    './assets/post/default.js',
-    './assets/post/default.scss',
+    './assets/post/default/default.js',
+    './assets/post/default/default.scss',
   ])
 
   // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
@@ -97,5 +98,21 @@ Encore
     to: '/[path][name].[ext]',
   })
 ;
+
+/*
+ * Build user assets
+ */
+const entries = {};
+fs.readdirSync('./assets/post/user').forEach((filename) => {
+  if (filename === '.gitkeep') {
+    return;
+  }
+  entryName = filename.replace(/\.[^.]+$/, '');
+  filePath = `./assets/post/user/${filename}`;
+  entries.hasOwnProperty(entryName) ? entries[entryName].push(filePath) : entries[entryName] = [filePath];
+})
+for (const [entryName, filePaths] of Object.entries(entries)) {
+  Encore.addEntry(entryName, filePaths);
+}
 
 module.exports = Encore.getWebpackConfig();

@@ -28,8 +28,8 @@ parameters:
     # if post matches multiple category based conditions, condition based deeper category is enabled.
     # if post matches multiple tag based conditions, anyone is arbitrarily enabled.
     category/full/name:
-      css: css/post/your-own.css
-      js: js/post/your-own.js
+      css: css/your-own.css
+      js: js/your-own.js
     '#tag_name':
-      css: css/post/your-own.css
+      css: css/your-own.css
       # if one of 'css' or 'js' is omitted, default.(css|js) is used.
