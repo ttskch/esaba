@@ -5,52 +5,52 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 
 imports:
-    - { resource: esa.yaml }
+  - { resource: esa.yaml }
 
 parameters:
 
 services:
-    # default configuration for services in *this* file
-    _defaults:
-        autowire: true      # Automatically injects dependencies in your services.
-        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-        bind:
-            string $teamName: '%esa.team_name%'
-            array $htmlReplacements: '%esaba.html_replacements%'
+  # default configuration for services in *this* file
+  _defaults:
+    autowire: true      # Automatically injects dependencies in your services.
+    autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+    bind:
+      string $teamName: '%esa.team_name%'
+      array $htmlReplacements: '%esaba.html_replacements%'
 
-    # makes classes in src/ available to be used as services
-    # this creates a service per class whose id is the fully-qualified class name
-    App\:
-        resource: '../src/'
-        exclude:
-            - '../src/DependencyInjection/'
-            - '../src/Entity/'
-            - '../src/Kernel.php'
-            - '../src/Tests/'
+  # makes classes in src/ available to be used as services
+  # this creates a service per class whose id is the fully-qualified class name
+  App\:
+    resource: '../src/'
+    exclude:
+      - '../src/DependencyInjection/'
+      - '../src/Entity/'
+      - '../src/Kernel.php'
+      - '../src/Tests/'
 
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
+  # add more service definitions when explicit configuration is needed
+  # please note that last definitions always *replace* previous ones
 
-    Polidog\Esa\Api:
-        factory: [Polidog\Esa\Api, factory]
-        arguments:
-            - '%esa.access_token%'
-            - '%esa.team_name%'
+  Polidog\Esa\Api:
+    factory: [Polidog\Esa\Api, factory]
+    arguments:
+      - '%esa.access_token%'
+      - '%esa.team_name%'
 
-    Symfony\Contracts\Cache\CacheInterface:
-        class: Symfony\Component\Cache\Adapter\FilesystemAdapter
-        arguments:
-            $directory: '%kernel.project_dir%/var/cache/esa'
+  Symfony\Contracts\Cache\CacheInterface:
+    class: Symfony\Component\Cache\Adapter\FilesystemAdapter
+    arguments:
+      $directory: '%kernel.project_dir%/var/cache/esa'
 
-    Symfony\Component\DomCrawler\Crawler: ~
+  Symfony\Component\DomCrawler\Crawler: ~
 
-    App\Service\AccessController:
-        arguments:
-            - '%esaba.public_categories%'
-            - '%esaba.public_tags%'
-            - '%esaba.private_categories%'
-            - '%esaba.private_tags%'
+  App\Service\AccessController:
+    arguments:
+      - '%esaba.public_categories%'
+      - '%esaba.public_tags%'
+      - '%esaba.private_categories%'
+      - '%esaba.private_tags%'
 
-    App\Service\AssetResolver:
-        arguments:
-            - '%esaba.asset_configs%'
+  App\Service\AssetResolver:
+    arguments:
+      - '%esaba.asset_configs%'
