@@ -22,7 +22,7 @@ class AccessControllerTest extends TestCase
     }
 
     /**
-     * @dataProvider testIsPublicDataProvider
+     * @dataProvider isPublicDataProvider
      */
     public function testIsPublic(string $category, array $tags, bool $expected): void
     {
@@ -31,7 +31,7 @@ class AccessControllerTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testIsPublicDataProvider(): array
+    public function isPublicDataProvider(): array
     {
         return [
             ['a/b',     [],               true],
