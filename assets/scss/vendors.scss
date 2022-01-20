@@ -1,5 +1,15 @@
-$fa-font-path: "~font-awesome/fonts";
+// customize bootstrap
+//$font-size-base: 1rem;
+$body-color: #444;
+$text-muted: #6c757d; // $gray-600
+$container-max-widths: (
+  sm: 540px,
+  md: 720px,
+  lg: 960px,
+  xl: 1280px // changed from 1140px
+) !default;
 
-@import "~bootstrap/scss/bootstrap";
-@import "~font-awesome/scss/font-awesome";
-@import "~select2/dist/css/select2";
+@import '~bootstrap/scss/bootstrap';
+@import '~@fortawesome/fontawesome-free/css/all.css';
+@import '~select2/dist/css/select2';
+@import '~@ttskch/select2-bootstrap4-theme/dist/select2-bootstrap4.css';

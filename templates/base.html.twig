@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}" prefix="og: http://ogp.me/ns#">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0">
+  <title>
+    {%- block title %}
+      {%- block subtitle %}{% endblock -%}
+      {%- if block('subtitle') is not empty %} | {% endif -%}
+      {%- block site_title %}esaba{% endblock -%}
+    {% endblock -%}
+  </title>
+  <meta name="description" content="{% block description %}{{ block('subtitle') }}{% endblock %}">
+  <link rel="canonical" href="{% block canonical %}{{ app.request.uri }}{% endblock %}">
+
+  <link rel="apple-touch-icon" href="{{ asset('build/images/esa/toriatama.png') }}" type="image/png">
+  <link rel="shortcut icon" href="{{ asset('build/images/esa/toriatama.png') }}" type="image/x-icon">
+
+  {# @see https://ogp.me/ #}
+  {# required #}
+  <meta property="og:title" content="{{ block('title') }}">
+  <meta property="og:type" content="{% block og_type %}website{% endblock %}">
+  <meta property="og:image" content="{% block og_image %}{{ absolute_url(asset('build/images/esa/toriatama.png')) }}{% endblock %}">
+  <meta property="og:url" content="{{ block('canonical') }}">
+  <meta property="fb:app_id" content="">
+  {# optional #}
+  <meta property="og:description" content="{{ block('description') }}">
+  <meta property="og:site_name" content="{{ block('site_title') }}">
+
+  {# @see https://developer.twitter.com/en/docs/tweets/optimize-with-cards/guides/getting-started #}
+  {# required #}
+  <meta name="twitter:card" content="summary_large_image">
+  {# optional #}
+{#  <meta name="twitter:site" content="@xxx">#}
+{#  <meta name="twitter:card" content="@xxx">#}
+
+  {% block meta %}{% endblock %}
+
+  {{ encore_entry_link_tags('vendors') }}
+
+  {% block stylesheets %}
+    {{ encore_entry_link_tags('app') }}
+  {% endblock %}
+</head>
+
+<body class="bg-light">
+{% block body %}
+  <nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
+    <div class="container">
+      <a class="navbar-brand" href="{% block navbar_brand_url %}{{ path('default_index') }}{% endblock %}">
+        <img src="{{ asset('build/images/esa/toriatama.png') }}" alt="Logo" width="25" height="25" class="mr-1">
+        <span>{{ block('site_title') }}</span>
+      </a>
+    </div>
+  </nav>
+
+  <div id="content" class="bg-white">
+    {% block flashes %}
+      {% if app.session.flashbag.peekAll|length > 0 %}
+        <div class="container">
+          {% for type, messages in app.session.flashbag.all %}
+            {% for message in messages %}
+              <div class="alert alert-{{ type }} alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endblock %}
+
+    {% block content %}
+      <div class="container">
+        {% block content_container %}
+        {% endblock %}
+      </div>
+    {% endblock %}
+  </div>
+
+  <footer id="footer" class="container">
+    {% block footer %}
+      <div class="small py-4">
+        <div class="text-muted text-right pb-2">
+          Powered by <a href="https://github.com/ttskch/esaba" class="text-secondary font-weight-bold" target="_blank"><i class="fab fa-github"></i> ttskch/esaba</a>
+        </div>
+        <div class="cc text-right">
+          <a href="https://docs.esa.io/posts/125" class="text-secondary font-weight-bold" target="_blank">Logos of esa.io</a>
+          are licensed under
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/" class="text-secondary font-weight-bold" target="_blank">CC BY-NC-ND 4.0</a>
+          <a rel="license" href="http://creativecommons.org/licenses/by-nc-nd/4.0/" target="_blank">
+            <img alt="Creative Commons License" style="border:none" src="https://i.creativecommons.org/l/by-nc-nd/4.0/80x15.png" />
+          </a>
+        </div>
+      </div>
+    {% endblock %}
+  </footer>
+
+  {{ encore_entry_script_tags('vendors') }}
+
+  {% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+  {% endblock %}
+{% endblock body %}
+</body>
+</html>

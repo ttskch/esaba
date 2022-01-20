@@ -1,0 +1,13 @@
+services:
+  _defaults:
+    public: true
+
+  Symfony\Contracts\Cache\CacheInterface:
+    class: Symfony\Component\Cache\Adapter\NullAdapter
+
+  App\Esa\WebhookValidator:
+    arguments:
+      - secret
+
+  App\Esa\Proxy: ~
+  App\Service\AccessController: ~

@@ -1,0 +1,260 @@
+@import '../../scss/variables';
+
+$color-muted: #868e96;
+$color-secondary: #868e96;
+$color-text: #212529;
+$color-light: #f8f9fa;
+$hr-border-color: rgba(#000,.1);
+$sidenav-top: $body-padding-top + $content-padding-top;
+
+#esa-content {
+
+  #esa-content-header {
+    position: relative;
+
+    .actions {
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+    .category {
+      color: $color-muted;
+    }
+    .title {
+      font-weight: bold;
+      margin: 0.8em 0;
+
+      &.wip {
+        color: $color-muted;
+
+        .badge {
+          font-size: 0.5em;
+          position: relative;
+          top: -0.4em;
+          display: inline-block !important;
+          background-color: rgba($color-secondary, 0.5);
+        }
+      }
+
+      .tag {
+        font-size: 1rem;
+        font-weight: normal;
+        color: $color-muted;
+      }
+    }
+    .updated-at {
+      color: $color-muted;
+      font-size: 0.8em;
+    }
+  }
+
+  #esa-content-body {
+    line-height: 1.8;
+
+    .hidden {
+      display: none;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      margin: 0.8em 0;
+      position: relative;
+      line-height: 1.4;
+
+      i.fa {
+        font-size: 0.7em;
+        position: absolute;
+        left: -1.3em;
+        top: 0.25em;
+        padding: 0.3em; // for click-ability
+        display: none;
+      }
+      &:hover {
+        i.fa {
+          display: block;
+        }
+      }
+
+      img.emoji {
+        height: 1em;
+      }
+    }
+
+    h1 {
+      padding-bottom: 0.3em;
+      border-bottom: 2px solid $hr-border-color;
+    }
+    h2 {
+      padding-bottom: 0.3em;
+      border-bottom: 1px solid $hr-border-color;
+    }
+
+    p, ul, ol, table, blockquote {
+      margin-bottom: 1.2em;
+    }
+
+    img {
+      max-width: 100%;
+      vertical-align: text-bottom;
+
+      &:not(.emoji) {
+        margin: 0.5em 0;
+        box-shadow: 0 0 2em rgba($color-secondary, 0.6);;
+      }
+
+      &.emoji {
+        border: none;
+        height: 1.1rem;
+        width: auto;
+      }
+    }
+
+    li {
+      margin: 0.5em 0;
+
+      p {
+        margin: 0;
+      }
+
+      &.task-list-item {
+        list-style: none;
+        margin-left: -1.3em;
+
+        input {
+          margin-right: 0.5em;
+        }
+      }
+    }
+
+    hr {
+      border-width: 3px;
+      margin: 3em 0;
+    }
+
+    code {
+      color: $color-text;
+      background-color: $color-light;
+      padding: 0.3em;
+      border-radius: $border-radius;
+    }
+
+    .code-block {
+      $border-radius: 3px;
+
+      .code-filename {
+        color: $color-muted;
+        background-color: $color-light;
+        font-size: 0.9em;
+        display: inline-block;
+        margin-bottom: -0.2em;
+        padding: 0.1em 0.5em;
+        border-radius: $border-radius;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+
+        i.fa {
+          margin-right: 0.2em;
+        }
+
+        & + pre code {
+          border-top-left-radius: 0;
+        }
+      }
+      pre {
+        code {
+          display: block;
+          background-color: $color-light;
+          padding: 0.5em 1em;
+          border-radius: $border-radius;
+        }
+      }
+    }
+
+    blockquote {
+      color: $color-muted;
+      border-left: 4px solid rgba($color-secondary, 0.5);
+      padding-left: 1em;
+
+      p:last-child {
+        margin-bottom: 0;
+      }
+    }
+
+    .footnotes {
+      font-size: 0.8em;
+      padding: 1em;
+      background-color: $color-light;
+
+      hr {
+        display: none;
+      }
+
+      ol {
+        margin-bottom: 0;
+        padding-left: 1.5em;
+      }
+    }
+  }
+}
+
+#side-nav {
+  position: sticky;
+  top: $sidenav-top;
+  height: 100%;
+
+  #toc-wrapper {
+    h6 {
+      margin-bottom: 1em;
+    }
+
+    #toc-box {
+      border-left: 4px solid $color-secondary;
+      padding: 0.5em 0;
+      padding-left: 1em;
+
+      ul {
+        padding-left: 1.5em;
+        margin-bottom: 0;
+
+        li {
+          margin: 0.5em 0;
+
+          &[class^='toc-'] {
+            &[class$='-0-0'] { // h1
+            }
+            &:not([class$='-0-0'])[class$='-0'] { // h2
+              margin-left: 1em;
+            }
+            &:not([class$='-0']) { // h3
+              margin-left: 2em;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media print {
+  #global-nav, #global-footer, #side-nav {
+    display: none;
+  }
+
+  #esa-content-header {
+    .actions {
+      display: none;
+    }
+  }
+
+  .code-block {
+    .code-filename {
+      border: 1px solid $color-secondary;
+      border-bottom: none;
+    }
+  }
+
+  blockquote {
+    border-top: none;
+    border-right: none;
+    border-bottom: none;
+  }
+}

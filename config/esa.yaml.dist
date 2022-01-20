@@ -1,0 +1,35 @@
+parameters:
+  esa.team_name: ~
+  esa.access_token: ~
+  esa.webhook_secret: ~
+
+  esaba.public_categories: [
+    # category names to be published.
+    # empty to publish all.
+  ]
+  esaba.public_tags: [
+    # tag names to be published.
+  ]
+  esaba.private_categories: [
+    # category names to be hidden.
+    # this overwrites esaba.public_categories config.
+  ]
+  esaba.private_tags: [
+    # tag names to be hidden.
+    # this overwrites esaba.public_tags config.
+  ]
+
+  esaba.html_replacements:
+    # /regex pattern/: replacement
+    /target=('|")_blank\1/: ''
+
+  esaba.asset_configs:
+    # if post matches multiple conditions, tag based condition overwrites category based condition.
+    # if post matches multiple category based conditions, condition based deeper category is enabled.
+    # if post matches multiple tag based conditions, anyone is arbitrarily enabled.
+    category/full/name:
+      css: css/your-own.css
+      js: js/your-own.js
+    '#tag_name':
+      css: css/your-own.css
+      # if one of 'css' or 'js' is omitted, default.(css|js) is used.
