@@ -5,156 +5,191 @@
 [![Code Coverage](https://scrutinizer-ci.com/g/ttskch/esaba/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/ttskch/esaba/?branch=master)
 [![Total Downloads](https://poser.pugx.org/ttskch/esaba/downloads)](https://packagist.org/packages/ttskch/esaba)
 
-[日本語はこちら](README.ja.md)
+## esabaとは
 
-## What's this?
+[esa.io](https://esa.io) 上の記事データをホストするためのPHP製のWebアプリケーションです。`/post/{記事ID}` というURLでesa.io上の任意の記事を公開できます。
 
-esaba hosts your markdown docs on [esa.io](https://esa.io). Url like `/post/:post_number` shows the post publicly.
-
-| on esa.io | on esaba (with default css) |
+| esa.io | esaba (デフォルトのcss) |
 | --- | --- |
-| ![image](https://user-images.githubusercontent.com/4360663/31869357-5c4cae84-b7e2-11e7-9c5f-2d37cb8b00e3.png) | ![image](https://user-images.githubusercontent.com/4360663/31869361-66ef4e8c-b7e2-11e7-8241-9195f2d8b16c.png) |
+| ![](https://tva1.sinaimg.cn/large/008i3skNgy1gyk8uwxnz1j31qf0u0q7e.jpg) | ![](https://tva1.sinaimg.cn/large/008i3skNgy1gyk8wcfgfqj31jl0u075s.jpg) |
 
-## Advantages compared to built-in "Share Post" feature
+## esa.io標準の [記事の外部公開](https://docs.esa.io/posts/110) との違い
 
-- Can show posts with your own css/js (scss/webpack ready)
-- Flexible setting of access restriction for each category/tag
-- Useful for company internal publishing because it's on-premise
-- No need to know the special sharing urls for each post because of auto replacement of link to other post with corresponding esaba url
+- 記事の表示に独自のcss/jsを使うことができる（scss/webpack対応）
+- カテゴリやタグごとに細かく公開/非公開を設定できる
+- 社内のみに公開したい場合などに便利（オンプレなのでWebサーバーレベルでアクセス制限可能）
+- 記事中に他の記事へのリンクがある場合は **esabaのURLに変換して出力してくれる** ので、記事本体のURLと公開用のURLを別々に管理する必要がない
 
-## Requirements
+## 環境要件
 
-- PHP 5.6+
+- PHP >=8.0.2
+- Node >=12
 - [Composer](https://getcomposer.org/)
 - [npm](https://www.npmjs.com/)
 
-## Installation
+## インストール方法
 
 ```bash
-$ composer create-project ttskch/esaba   # automatically npm install
+$ composer create-project ttskch/esaba # automatically npm install
 $ cd esaba
-$ cp config/config.secret.php{.placeholder,}
-$ vi config/config.secret.php   # tailor to your env
+$ vi config/esa.yaml # tailor to your env
 ```
 
-You must to issue personal access token in advance.
+事前に `https://{チーム名}.esa.io/user/tokens/new` にて [アクセストークン](https://docs.esa.io/posts/102#%E8%AA%8D%E8%A8%BC%E3%81%A8%E8%AA%8D%E5%8F%AF) を発行しておく必要があります。
 
-![image](https://user-images.githubusercontent.com/4360663/31835239-c8ea9b60-b60b-11e7-9d83-ee40eebdfb6c.png)
+![](https://tva1.sinaimg.cn/large/008i3skNgy1gyk90gdd96j31z00l4go4.jpg)
 
-## Usage
+## 使い方
 
-### Running in dev
+### 開発中のローカルサーバー起動
 
 ```bash
-$ COMPOSER_PROCESS_TIMEOUT=0 composer run
+$ php -S localhost:8000 -t public
+# or if symfony-cli is installed
+$ symfony serve
 ```
 
-And go to http://localhost:8888/index_dev.php/post/:post_number
+ブラウザで `http://localhost:8000/post/:post_number` へアクセス。
 
-### Configuration
+### 設定
 
-#### Access restriction
+#### 最小限の設定
 
-```php
-// config/config.php
+```yaml
+# config/esa.yaml
 
-$app['config.esa.public'] = [
-    'categories' => [
-        // category names to be published.
-        // empty to publish all.
-    ],
-    'tags' => [
-        // tag names to be published.
-    ],
-];
-
-$app['config.esa.private'] = [
-    'categories' => [
-        // category names to be withheld.
-        // this overwrites esa.public config.
-    ],
-    'tags' => [
-        // tag names to be withheld.
-        // this overwrites esa.public config.
-    ],
-];
+parameters:
+  esa.team_name: {チーム名}
+  esa.access_token: {アクセストークン}
+  esa.webhook_secret: ~
+  esaba.public_categories: ~
+  esaba.public_tags: ~
+  esaba.private_categories: ~
+  esaba.private_tags: ~
+  esaba.html_replacements: ~
+  esaba.asset_configs: ~
 ```
 
-#### Html replacements
+#### アクセス制限
 
-esaba replaces links to other post in content html of post with links to see the post on esaba automatically. And you can also fix content before rendering with arbitrary replacements. For example, you can remove all `target="_blank"` by following.
+```yaml
+# config/esa.yaml
 
-```php
-// config/config.php
-
-$app['config.esa.html_replacements'] = [
-    // '/regex pattern/' => 'replacement',
-    '/target=(\'|")_blank\1/' => '',
-];
+parameters:
+  # ...
+  
+  esaba.public_categories: [
+    # category names to be published.
+    # empty to publish all.
+  ]
+  esaba.public_tags: [
+    # tag names to be published.
+  ]
+  esaba.private_categories: [
+    # category names to be hidden.
+    # this overwrites esaba.public_categories config.
+  ]
+  esaba.private_tags: [
+    # tag names to be hidden.
+    # this overwrites esaba.public_tags config.
+  ]
 ```
 
-#### Switching css/js according to categories/tags
+#### HTMLの置換
 
-```php
-// config/config.php
+記事中に他の記事へのリンクがある場合は、esabaでその記事を閲覧するためのURLに自動で置き換えられます。
 
-$app['config.esa.asset'] = [
-    // if post matches multiple conditions, tag based condition overwrites category based condition.
-    // if post matches multiple category based conditions, condition based deeper category is enabled.
-    // if post matches multiple tag based conditions, any one is arbitrarily enabled.
-    'category/full/name' => [
-        'css' => 'css/post/your-own.css',
-        'js' => 'js/post/your-own.js',
-    ],
-    '#tag_name' => [
-        'css' => 'css/post/your-own.css',
-        // if one of 'css' or 'js' is omitted, default.(css|js) is used.
-    ],
-];
+また、それとは別に任意の置換ルールを設定しておくこともできます。例えば、すべての `target="_blank"` を削除したい場合は、以下のように設定します。
+
+```yaml
+# config/esa.yaml
+
+parameters:
+  # ...
+
+  esaba.html_replacements:
+    # /regex pattern/: replacement
+    /target=('|")_blank\1/: ''
 ```
 
-And deploy `./web/css/post/your-own.css` and `./web/js/post/your-own.js`. 
+#### カテゴリ/タグに応じたcss/jsの切り替え
 
-### Building your own assets with webpack
+```yaml
+# config/esa.yaml
 
-esaba is scss/webpack ready. `./assets/post/*.(scss|js)` will be built and deploy to `./web/(css|js)/post/*.(css|js)` by webpack automatically just like below.
+parameters:
+  # ...
+
+  esaba.asset_configs:
+    # if post matches multiple conditions, tag based condition overwrites category based condition.
+    # if post matches multiple category based conditions, condition based deeper category is enabled.
+    # if post matches multiple tag based conditions, anyone is arbitrarily enabled.
+    category/full/name:
+      css: css/your-own.css
+      js: js/your-own.js
+    '#tag_name':
+      css: css/your-own.css
+      # if one of 'css' or 'js' is omitted, default.(css|js) is used.
+```
+
+上記のように設定した上で、 `./public/css/post/your-own.css` および `./public/js/post/your-own.js` を設置します。
+
+### webpackによる独自アセットのビルド
+
+esabaはscss/webpackに対応しています。
+
+`./assets/post/user/{エントリー名}.(scss|js)` に独自アセットを配置し、
 
 ```bash
-$ vi assets/post/your-own.scss
+$ yarn build
+# or
 $ npm run build
-  :
-$ tree web/css/post
-web/css/post
-├── default.css
-└── your-own.css
+```
 
-0 directories, 2 files
+を実行すると、以下のように `build/{エントリー名}.(css|js)` というパスで利用できるようになります。
+
+```yaml
+# config/esa.yaml
+
+parameters:
+  # ...
+
+  esaba.asset_configs:
+    category/full/name:
+      css: build/your-own.css
+      js: build/your-own.js
 ```
 
 ### Webhook
 
-You can configure to automatically warm-up caches for created/updated posts using [esa Generic Webhook](https://docs.esa.io/posts/37).
+[esa Generic Webhook](https://docs.esa.io/posts/37) を使うことで、esa.io上で記事が作成/更新されたときに、esaba側のキャッシュを自動で更新させることができます。
 
-![image](https://user-images.githubusercontent.com/4360663/32140978-d312be36-bcb6-11e7-84a4-133ab56506cd.png)
+![](https://tva1.sinaimg.cn/large/008i3skNgy1gyk9f1bvjrj30u00ufwgu.jpg)
 
-```php
-// config/config.secret.php
+```yaml
+# config/esa.yaml
 
-$app['config.esa.webhook_secret'] = 'Secret here';
+parameters:
+  # ...
+
+  esa.webhook_secret: {シークレット}
+
+  # または、シークレットなしの場合は
+  esa.webhook_secret: ~
 ```
 
-#### Unrestricting access to `/webhook/`
+#### `/webhook` へのアクセスの解放
 
-If you set some access restrictions on web server layer, you must unrestrict access to `/webhook/` for webhook request from esa.io.
- 
-For example, on Apache 2.4, config like below.
+もしWebサーバーレベルでのアクセス制限を設定している場合、 `/webhook` へのアクセスはesa.ioからのwebhookリクエストを受け取るために解放しておく必要があります。
+
+例えば、Apache 2.4の場合は以下のような設定が必要になります。
 
 ```
 <Location />
     Require ip xxx.xxx.xxx.xxx
 </Location>
 
-<LocationMatch ^/(index.php|webhook/?)$>
+<LocationMatch ^/(index.php|webhook?)$>
     Require all granted
 </LocationMatch>
 ```
