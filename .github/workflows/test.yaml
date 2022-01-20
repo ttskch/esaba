@@ -8,7 +8,6 @@ jobs:
     strategy:
       matrix:
         php-versions: [8.0.2, 8.1]
-        composer-install-options: ['', --prefer-lowest]
 
     steps:
       - uses: shivammathur/setup-php@v2
@@ -17,6 +16,9 @@ jobs:
           extensions: ctype, dom, iconv
 
       - uses: actions/checkout@v2
+        # @see https://github.com/scrutinizer-ci/ocular/commit/801d176fbcee081f1f4f8c879a07a0ca5ff86eca#commitcomment-47604854
+        with:
+          fetch-depth: 2
 
       - name: Copy .env.test.local
         run: php -r "file_exists('.env.test.local') || copy('.env.test', '.env.test.local');"
@@ -32,17 +34,22 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          composer update -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist ${{ matrix.composer-install-options }}
-          cp ./config/esa.yaml{.dist,}
+          composer update -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
+          npm install
+          cp config/esa.yaml{.dist,}
 
       - name: Execute tests
         run: ./vendor/bin/phpunit --coverage-clover=coverage.clover
 
       - name: Send coverage file to Scrutinizer
         if: ${{ matrix.php-versions == '8.1' && matrix.composer-install-options == '' }}
+        # @see https://github.com/scrutinizer-ci/ocular/issues/54#issuecomment-784993370
+#        run: |
+#          wget https://scrutinizer-ci.com/ocular.phar
+#          php ocular.phar code-coverage:upload --format=php-clover coverage.clover
         run: |
-          wget https://scrutinizer-ci.com/ocular.phar
-          php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+          composer global require scrutinizer/ocular
+          ~/.composer/vendor/bin/ocular code-coverage:upload --format=php-clover coverage.clover
 
       - name: PHP CS Fixer
         run: composer cs
