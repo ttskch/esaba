@@ -9,6 +9,7 @@ use App\Esa\Proxy;
 use App\Esa\WebhookValidator;
 use App\Service\AccessController;
 use App\Service\AssetResolver;
+use Polidog\Esa\Exception\ClientException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -30,7 +31,7 @@ class DefaultController extends AbstractController
         return $this->render('default/index.html.twig');
     }
 
-    #[Route('/{id}', name: 'post', requirements: ['id' => '\d+'])]
+    #[Route('/post/{id}', name: 'post', requirements: ['id' => '\d+'])]
     public function post(
         Request $request,
         int $id,
@@ -42,7 +43,11 @@ class DefaultController extends AbstractController
     ): Response {
         $force = boolval($request->get('force', 0));
 
-        $post = $esa->getPost($id, $force);
+        try {
+            $post = $esa->getPost($id, $force);
+        } catch (ClientException $e) {
+            throw new NotFoundHttpException();
+        }
 
         if (!$accessController->isPublic($post['category'], $post['tags'])) {
             throw new NotFoundHttpException();
@@ -74,7 +79,7 @@ class DefaultController extends AbstractController
         ]);
     }
 
-    #[Route('/webhook', name: 'webhook')]
+    #[Route('/webhook', name: 'webhook', methods: ['POST'])]
     public function webhook(
         Request $request,
         WebhookValidator $validator,

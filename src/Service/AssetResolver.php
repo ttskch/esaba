@@ -42,7 +42,7 @@ class AssetResolver
         return array_merge($assetPaths, $categoryBasedAssetPaths, $tagBasedAssetPaths);
     }
 
-    public function getCategoryBasedAssetPaths(?string $category): array
+    private function getCategoryBasedAssetPaths(?string $category): array
     {
         foreach ($this->categoryBasedConfig as $matcher => $paths) {
             if (preg_match(sprintf('#^%s#', $matcher), (string) $category)) {
@@ -53,10 +53,10 @@ class AssetResolver
         return [];
     }
 
-    public function getTagBasedAssetPaths(array $tags): array
+    private function getTagBasedAssetPaths(?array $tags): array
     {
         foreach ($this->tagBasedConfig as $matcher => $paths) {
-            if (in_array(substr($matcher, 1), $tags)) {
+            if (in_array(substr($matcher, 1), (array) $tags)) {
                 return $paths;
             }
         }

@@ -28,6 +28,14 @@
         "twig/extra-bundle": "^2.12|^3.0",
         "twig/twig": "^2.12|^3.0"
     },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.5",
+        "phpspec/prophecy-phpunit": "^2.0",
+        "phpunit/phpunit": "^9.5",
+        "symfony/browser-kit": "6.0.*",
+        "symfony/maker-bundle": "^1.36",
+        "symfony/phpunit-bridge": "^6.0"
+    },
     "config": {
         "allow-plugins": {
             "composer/package-versions-deprecated": true,
@@ -89,12 +97,5 @@
             "allow-contrib": false,
             "require": "6.0.*"
         }
-    },
-    "require-dev": {
-        "friendsofphp/php-cs-fixer": "^3.5",
-        "phpunit/phpunit": "^9.5",
-        "symfony/browser-kit": "6.0.*",
-        "symfony/maker-bundle": "^1.36",
-        "symfony/phpunit-bridge": "^6.0"
     }
 }

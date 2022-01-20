@@ -31,18 +31,22 @@ services:
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones
 
-  Polidog\Esa\Api:
-    factory: [Polidog\Esa\Api, factory]
-    arguments:
-      - '%esa.access_token%'
-      - '%esa.team_name%'
-
   Symfony\Contracts\Cache\CacheInterface:
     class: Symfony\Component\Cache\Adapter\FilesystemAdapter
     arguments:
       $directory: '%kernel.project_dir%/var/cache/esa'
 
   Symfony\Component\DomCrawler\Crawler: ~
+
+  Polidog\Esa\Api:
+    factory: [Polidog\Esa\Api, factory]
+    arguments:
+      - '%esa.access_token%'
+      - '%esa.team_name%'
+
+  App\Esa\WebhookValidator:
+    arguments:
+      - '%esa.webhook_secret%'
 
   App\Service\AccessController:
     arguments:
