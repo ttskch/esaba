@@ -69,7 +69,6 @@
     },
     "scripts": {
         "auto-scripts": {
-            "if [ ! -e config/esa.yaml ]; then cp config/esa.yaml{.dist,}; fi":  "script",
             "cache:clear": "symfony-cmd",
             "assets:install %PUBLIC_DIR%": "symfony-cmd"
         },

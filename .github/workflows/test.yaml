@@ -36,7 +36,6 @@ jobs:
         run: |
           composer update -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
           npm install
-          cp config/esa.yaml{.dist,}
 
       - name: Execute tests
         run: ./vendor/bin/phpunit --coverage-clover=coverage.clover
