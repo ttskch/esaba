@@ -9,6 +9,7 @@ use App\Esa\Proxy;
 use App\Esa\WebhookValidator;
 use App\Service\AccessController;
 use App\Service\AssetResolver;
+use JsonException;
 use Polidog\Esa\Exception\ClientException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -79,6 +80,9 @@ final class DefaultController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws JsonException
+     */
     #[Route('/webhook', name: 'webhook', methods: ['POST'])]
     public function webhook(
         Request $request,
@@ -93,7 +97,7 @@ final class DefaultController extends AbstractController
             throw new NotFoundHttpException();
         }
 
-        $body = json_decode($request->getContent(), true);
+        $body = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         switch ($body['kind']) {
             case 'post_create':
