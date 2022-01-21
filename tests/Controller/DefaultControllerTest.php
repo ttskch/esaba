@@ -7,6 +7,7 @@ namespace App\Tests\Controller;
 use App\Esa\Proxy;
 use App\Service\AccessController;
 use Polidog\Esa\Api;
+use Polidog\Esa\Exception\ClientException;
 use Prophecy\Argument;
 use Prophecy\PhpUnit\ProphecyTrait;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
@@ -66,6 +67,18 @@ class DefaultControllerTest extends WebTestCase
         // force get
         $client->request('GET', '/post/1?force=1');
         $this->assertResponseRedirects('/post/1');
+
+        // esa api error
+        $client = self::createClient();
+        $container = self::getContainer();
+        $container->set(AccessController::class, new AccessController([], [], [], []));
+        $api = $this->prophesize(Api::class);
+        $api->post(1)->willThrow(ClientException::class);
+        $api->emojis(Argument::cetera())->willReturn($emojis);
+        $esa = new Proxy($api->reveal(), $container->get(CacheInterface::class));
+        $container->set(Proxy::class, $esa);
+        $client->request('GET', '/post/1');
+        $this->assertResponseStatusCodeSame(404);
     }
 
     /**
