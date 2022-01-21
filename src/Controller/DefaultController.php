@@ -46,7 +46,7 @@ final class DefaultController extends AbstractController
         try {
             $post = $esa->getPost($id, $force);
         } catch (ClientException $e) {
-            throw new NotFoundHttpException();
+            throw new NotFoundHttpException('', $e);
         }
 
         if (!$accessController->isPublic($post['category'], $post['tags'])) {
