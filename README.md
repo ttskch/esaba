@@ -1,8 +1,8 @@
 # esaba
 
 [![Test Status](https://github.com/ttskch/esaba/actions/workflows/test.yaml/badge.svg)](https://github.com/ttskch/esaba/actions/workflows/test.yaml)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ttskch/esaba/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ttskch/esaba/?branch=master)
-[![Code Coverage](https://scrutinizer-ci.com/g/ttskch/esaba/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/ttskch/esaba/?branch=master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ttskch/esaba/badges/quality-score.png)](https://scrutinizer-ci.com/g/ttskch/esaba)
+[![Code Coverage](https://scrutinizer-ci.com/g/ttskch/esaba/badges/coverage.png)](https://scrutinizer-ci.com/g/ttskch/esaba)
 [![Latest Stable Version](https://poser.pugx.org/ttskch/esaba/version?format=flat-square)](https://packagist.org/packages/ttskch/esaba)
 [![Total Downloads](https://poser.pugx.org/ttskch/esaba/downloads?format=flat-square)](https://packagist.org/packages/ttskch/esaba)
 
