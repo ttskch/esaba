@@ -55,4 +55,6 @@ return json_encode([
 //            // if one of "css" or "js" is omitted, default.(css|js) is used
 //        ],
     ]),
+
+    'ESABA_ENABLE_INDEXING' => 'false', // not bool but string
 ]);

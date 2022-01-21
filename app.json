@@ -45,6 +45,10 @@
     "ESABA_USER_ASSETS": {
       "description": "user asset configs list as json string like {\"path/to/category\": {\"css\": \"css/your-own.css\", \"js\": \"js/your-own.js\"}, \"#tag_name\": {\"css\": \"css/your-own.css\"}}",
       "required": false
+    },
+    "ESABA_ENABLE_INDEXING": {
+      "description": "enable search engine indexing (true/false)",
+      "required": false
     }
   }
 }

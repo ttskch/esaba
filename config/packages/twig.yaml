@@ -3,6 +3,8 @@ twig:
   form_themes:
     - 'form_theme/bootstrap_4_layout.html.twig'
     - 'form_theme/bootstrap_4_horizontal_layout.html.twig' # to be the default theme
+  globals:
+    enable_indexing: '%env(bool:FINAL_ESABA_ENABLE_INDEXING)%'
 
 when@test:
   twig:

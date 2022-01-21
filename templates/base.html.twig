@@ -17,6 +17,10 @@
   <link rel="apple-touch-icon" href="{{ asset('build/images/esa/toriatama.png') }}" type="image/png">
   <link rel="shortcut icon" href="{{ asset('build/images/esa/toriatama.png') }}" type="image/x-icon">
 
+  {% if not enable_indexing %}
+    <meta name="robots" content="noindex, nofollow">
+  {% endif %}
+
   {# @see https://ogp.me/ #}
   {# required #}
   <meta property="og:title" content="{{ block('title') }}">
