@@ -7,10 +7,10 @@ namespace App\Service;
 class AccessController
 {
     public function __construct(
-        private array $publicCategories,
-        private array $publicTags,
-        private array $privateCategories,
-        private array $privateTags,
+        private ?array $publicCategories,
+        private ?array $publicTags,
+        private ?array $privateCategories,
+        private ?array $privateTags,
     ) {
     }
 
