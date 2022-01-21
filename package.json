@@ -15,7 +15,7 @@
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.15.4",
     "@symfony/stimulus-bridge": "^3.0.0",
-    "@symfony/webpack-encore": "^1.7.0",
+    "@symfony/webpack-encore": "1.7.0",
     "@ttskch/select2-bootstrap4-theme": "^1.5.2",
     "autoprefixer": "^10.4.2",
     "bootstrap": "^4.6.1",
