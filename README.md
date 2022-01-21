@@ -51,6 +51,8 @@ $ vi .env.local # tailor to your env
 
 [![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/ttskch/esaba)
 
+<img src="https://tva1.sinaimg.cn/large/008i3skNgy1gyl91ahzfqj30u022d79o.jpg" width="600">
+
 ## 使い方
 
 ### 設定
