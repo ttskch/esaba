@@ -80,10 +80,6 @@
             "@auto-scripts",
             "npm install"
         ],
-        "post-create-project-cmd": [
-            "@auto-scripts",
-            "npm install"
-        ],
         "cs": "./vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php --dry-run --diff -v src tests",
         "cs-fix": "./vendor/bin/php-cs-fixer fix --config .php-cs-fixer.dist.php src tests",
         "test": "./vendor/bin/phpunit",
