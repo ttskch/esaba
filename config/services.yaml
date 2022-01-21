@@ -15,8 +15,8 @@ services:
     autowire: true      # Automatically injects dependencies in your services.
     autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
     bind:
-      string $teamName: '%env(string:FINAL_ESA_TEAM_NAME)%'
-      array $htmlReplacements: '%env(json:FINAL_ESABA_HTML_REPLACEMENTS)%'
+      string $teamName: '%esa_team_name%'
+      array $htmlReplacements: '%esaba_html_replacements%'
 
   # makes classes in src/ available to be used as services
   # this creates a service per class whose id is the fully-qualified class name
@@ -41,20 +41,20 @@ services:
   Polidog\Esa\Api:
     factory: [Polidog\Esa\Api, factory]
     arguments:
-      - '%env(string:FINAL_ESA_ACCESS_TOKEN)%'
-      - '%env(string:FINAL_ESA_TEAM_NAME)%'
+      - '%esa_access_token%'
+      - '%esa_team_name%'
 
   App\Esa\WebhookValidator:
     arguments:
-      - '%env(string:FINAL_ESA_WEBHOOK_SECRET)%'
+      - '%esa_webhook_secret%'
 
   App\Service\AccessController:
     arguments:
-      - '%env(json:FINAL_ESABA_PUBLIC_CATEGORIES)%'
-      - '%env(json:FINAL_ESABA_PUBLIC_TAGS)%'
-      - '%env(json:FINAL_ESABA_PRIVATE_CATEGORIES)%'
-      - '%env(json:FINAL_ESABA_PRIVATE_TAGS)%'
+      - '%esaba_public_categories%'
+      - '%esaba_public_tags%'
+      - '%esaba_private_categories%'
+      - '%esaba_private_tags%'
 
   App\Service\AssetResolver:
     arguments:
-      - '%env(json:FINAL_ESABA_USER_ASSETS)%'
+      - '%esaba_user_assets%'
