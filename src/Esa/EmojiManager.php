@@ -8,7 +8,7 @@ use App\Esa\Exception\UndefinedEmojiException;
 
 class EmojiManager
 {
-    private $emojis;
+    private array $emojis;
 
     public function __construct(private Proxy $esa)
     {
