@@ -1,6 +1,6 @@
 # esaba
 
-[![Build Status](https://travis-ci.org/ttskch/esaba.svg?branch=master)](https://travis-ci.org/ttskch/esaba)
+[![Test Status](https://github.com/ttskch/esaba/actions/workflows/test.yaml/badge.svg)](https://github.com/ttskch/esaba/actions/workflows/test.yaml)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ttskch/esaba/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ttskch/esaba/?branch=master)
 [![Code Coverage](https://scrutinizer-ci.com/g/ttskch/esaba/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/ttskch/esaba/?branch=master)
 [![Latest Stable Version](https://poser.pugx.org/ttskch/esaba/version?format=flat-square)](https://packagist.org/packages/ttskch/esaba)
