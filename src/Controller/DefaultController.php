@@ -19,19 +19,19 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/', name: 'default_')]
-class DefaultController extends AbstractController
+final class DefaultController extends AbstractController
 {
-    #[Route('/', name: 'index')]
+    #[Route('/', name: 'index', methods: ['get'])]
     public function index(Request $request): Response
     {
-        if ($postId = $request->get('post_id')) {
+        if ($postId = $request->query->get('post_id')) {
             return $this->redirectToRoute('default_post', ['id' => $postId]);
         }
 
         return $this->render('default/index.html.twig');
     }
 
-    #[Route('/post/{id}', name: 'post', requirements: ['id' => '\d+'])]
+    #[Route('/post/{id}', name: 'post', requirements: ['id' => '\d+'], methods: ['get'])]
     public function post(
         Request $request,
         int $id,
@@ -41,7 +41,7 @@ class DefaultController extends AbstractController
         AssetResolver $assetResolver,
         array $htmlReplacements,
     ): Response {
-        $force = boolval($request->get('force', 0));
+        $force = $request->query->getBoolean('force');
 
         try {
             $post = $esa->getPost($id, $force);
