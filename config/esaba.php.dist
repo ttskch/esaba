@@ -1,0 +1,58 @@
+<?php
+
+return json_encode([
+    //
+    // required
+    //
+
+    'ESA_TEAM_NAME' => '',
+    'ESA_ACCESS_TOKEN' => '',
+
+    //
+    // optional
+    //
+
+    'ESA_WEBHOOK_SECRET' => '',
+
+    // empty to publish all
+    'ESABA_PUBLIC_CATEGORIES' => json_encode([
+//        'path/to/category1',
+//        'path/to/category2',
+    ]),
+
+    'ESABA_PUBLIC_TAGS' => json_encode([
+//        'tag1',
+//        'tag2',
+    ]),
+
+    // takes priority of over ESABA_PUBLIC_CATEGORIES
+    'ESABA_PRIVATE_CATEGORIES' => json_encode([
+//        'path/to/category1/subcategory1',
+//        'path/to/category1/subcategory2',
+    ]),
+
+    // takes priority of over ESABA_PUBLIC_TAGS
+    'ESABA_PRIVATE_TAGS' => json_encode([
+//        'tag3',
+//        'tag4',
+    ]),
+
+    'ESABA_HTML_REPLACEMENTS' => json_encode([
+//        '/regex pattern/' => 'replacement',
+//        '/target=(\'|")_blank\1/' => '',
+    ]),
+
+    // if post matches multiple conditions, tag based condition taks priority of over category based condition
+    // if post matches multiple category based conditions, condition for deeper category is enabled
+    // if post matches multiple tag based conditions, any arbitrarily one is enabled
+    'ESABA_USER_ASSETS' => json_encode([
+//        'path/to/category' => [
+//            'css' => 'css/your-own.css',
+//            'js' => 'js/your-own.js',
+//        ],
+//        '#tag_name' => [
+//            'css' => 'css/your-own.css',
+//            // if one of "css" or "js" is omitted, default.(css|js) is used
+//        ],
+    ]),
+]);

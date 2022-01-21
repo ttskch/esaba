@@ -14,7 +14,7 @@ class HtmlHandler
         private Crawler $crawler,
         private UrlGeneratorInterface $urlGenerator,
         private EmojiManager $emojiManager,
-        private ?string $teamName,
+        private string $teamName,
     ) {
     }
 
@@ -137,7 +137,7 @@ class HtmlHandler
         $backReferenceNumberForPostId = 3;
         $backReferenceNumberForAnchorHash = 5;
 
-        return sprintf('#^((https?:)?//%s\.esa\.io)?/posts/(\d+)(/|/edit/?)?(\#.+)?$#', (string) $this->teamName);
+        return sprintf('#^((https?:)?//%s\.esa\.io)?/posts/(\d+)(/|/edit/?)?(\#.+)?$#', $this->teamName);
     }
 
     public function getMentionLinkPattern(): string

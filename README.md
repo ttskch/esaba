@@ -6,7 +6,6 @@
 [![Latest Stable Version](https://poser.pugx.org/ttskch/esaba/version?format=flat-square)](https://packagist.org/packages/ttskch/esaba)
 [![Total Downloads](https://poser.pugx.org/ttskch/esaba/downloads?format=flat-square)](https://packagist.org/packages/ttskch/esaba)
 
-
 ## esabaとは
 
 [esa.io](https://esa.io) 上の記事データをホストするためのPHP製のWebアプリケーションです。`/post/{記事ID}` というURLでesa.io上の任意の記事を公開できます。
@@ -31,70 +30,72 @@
 
 ## インストール方法
 
-```bash
-$ composer create-project ttskch/esaba # automatically npm install
-$ cd esaba
-$ vi config/esa.yaml # tailor to your env
-```
+### アクセストークンの発行
 
-事前に `https://{チーム名}.esa.io/user/tokens/new` にて [アクセストークン](https://docs.esa.io/posts/102#%E8%AA%8D%E8%A8%BC%E3%81%A8%E8%AA%8D%E5%8F%AF) を発行しておく必要があります。
+事前に `https://{チーム名}.esa.io/user/tokens/new` にてRead権限を持った [アクセストークン](https://docs.esa.io/posts/102#%E8%AA%8D%E8%A8%BC%E3%81%A8%E8%AA%8D%E5%8F%AF) を発行しておく必要があります。
 
 ![](https://tva1.sinaimg.cn/large/008i3skNgy1gyk90gdd96j31z00l4go4.jpg)
 
-## 使い方
-
-### 開発中のローカルサーバー起動
+### 任意のサーバーへのインストール
 
 ```bash
-$ php -S localhost:8000 -t public
-# or if symfony-cli is installed
-$ symfony serve
+$ composer create-project ttskch/esaba # automatically npm install
+$ cd esaba
+$ cp .env{,.local}
+$ vi .env.local # tailor to your env
+
+# and serve under ./public with your web server
 ```
 
-ブラウザで `http://localhost:8000/post/:post_number` へアクセス。
+## 使い方
 
 ### 設定
 
+設定は `.env.local` または `config/esaba.php` で行います。
+
 #### 最小限の設定
 
-```yaml
-# config/esa.yaml
+```
+# .env.local
 
-parameters:
-  esa.team_name: {チーム名}
-  esa.access_token: {アクセストークン}
-  esa.webhook_secret: ~
-  esaba.public_categories: ~
-  esaba.public_tags: ~
-  esaba.private_categories: ~
-  esaba.private_tags: ~
-  esaba.html_replacements: ~
-  esaba.asset_configs: ~
+ESA_TEAM_NAME={チーム名}
+ESA_ACCESS_TOKEN={アクセストークン}
 ```
 
 #### アクセス制限
 
-```yaml
-# config/esa.yaml
+カテゴリ/タグに応じて公開/非公開を設定することができます。設定値はJSON形式の文字列とする必要があり `.env.local` ではエスケープなどが面倒なので、`config/esaba.php` で設定するのがおすすめです。
 
-parameters:
-  # ...
-  
-  esaba.public_categories: [
-    # category names to be published.
-    # empty to publish all.
-  ]
-  esaba.public_tags: [
-    # tag names to be published.
-  ]
-  esaba.private_categories: [
-    # category names to be hidden.
-    # this overwrites esaba.public_categories config.
-  ]
-  esaba.private_tags: [
-    # tag names to be hidden.
-    # this overwrites esaba.public_tags config.
-  ]
+```php
+<?php
+// config/esaba.php
+
+return json_encode([
+    // ...
+
+    // empty to publish all
+    'ESABA_PUBLIC_CATEGORIES' => json_encode([
+//        'path/to/category1',
+//        'path/to/category2',
+    ]),
+
+    'ESABA_PUBLIC_TAGS' => json_encode([
+//        'tag1',
+//        'tag2',
+    ]),
+
+    // takes priority of over ESABA_PUBLIC_CATEGORIES
+    'ESABA_PRIVATE_CATEGORIES' => json_encode([
+//        'path/to/category1/subcategory1',
+//        'path/to/category1/subcategory2',
+    ]),
+
+    // takes priority of over ESABA_PUBLIC_TAGS
+    'ESABA_PRIVATE_TAGS' => json_encode([
+//        'tag3',
+//        'tag4',
+    ]),
+]);
 ```
 
 #### HTMLの置換
@@ -103,64 +104,45 @@ parameters:
 
 また、それとは別に任意の置換ルールを設定しておくこともできます。例えば、すべての `target="_blank"` を削除したい場合は、以下のように設定します。
 
-```yaml
-# config/esa.yaml
+```php
+<?php
 
-parameters:
-  # ...
+return json_encode([
+    // ...
 
-  esaba.html_replacements:
-    # /regex pattern/: replacement
-    /target=('|")_blank\1/: ''
+    'ESABA_HTML_REPLACEMENTS' => json_encode([
+//        '/regex pattern/' => 'replacement',
+        '/target=(\'|")_blank\1/' => '',
+    ]),
+]);
 ```
 
 #### カテゴリ/タグに応じたcss/jsの切り替え
 
-```yaml
-# config/esa.yaml
+```php
+<?php
+// config/esaba.php
 
-parameters:
-  # ...
+return json_encode([
+    // ...
 
-  esaba.asset_configs:
-    # if post matches multiple conditions, tag based condition overwrites category based condition.
-    # if post matches multiple category based conditions, condition based deeper category is enabled.
-    # if post matches multiple tag based conditions, anyone is arbitrarily enabled.
-    category/full/name:
-      css: css/your-own.css
-      js: js/your-own.js
-    '#tag_name':
-      css: css/your-own.css
-      # if one of 'css' or 'js' is omitted, default.(css|js) is used.
+    // if post matches multiple conditions, tag based condition taks priority of over category based condition
+    // if post matches multiple category based conditions, condition for deeper category is enabled
+    // if post matches multiple tag based conditions, any arbitrarily one is enabled
+    'ESABA_USER_ASSETS' => json_encode([
+        'path/to/category' => [
+            'css' => 'css/your-own.css',
+            'js' => 'js/your-own.js',
+        ],
+        '#tag_name' => [
+            'css' => 'css/your-own.css',
+            // if one of "css" or "js" is omitted, default.(css|js) is used
+        ],
+    ]),
+]);
 ```
 
-上記のように設定した上で、 `./public/css/post/your-own.css` および `./public/js/post/your-own.js` を設置します。
-
-### webpackによる独自アセットのビルド
-
-esabaはscss/webpackに対応しています。
-
-`./assets/post/user/{エントリー名}.(scss|js)` に独自アセットを配置し、
-
-```bash
-$ yarn build
-# or
-$ npm run build
-```
-
-を実行すると、以下のように `build/{エントリー名}.(css|js)` というパスで利用できるようになります。
-
-```yaml
-# config/esa.yaml
-
-parameters:
-  # ...
-
-  esaba.asset_configs:
-    category/full/name:
-      css: build/your-own.css
-      js: build/your-own.js
-```
+上記のように設定した上で、 `./public/css/post/your-own.css` および `./public/js/post/your-own.js` を設置することで、`path/to/category` カテゴリや `#tag_name` タグに該当する記事に対して指定したcss/jsを適用させることができます。
 
 ### Webhook
 
@@ -168,16 +150,10 @@ parameters:
 
 ![](https://tva1.sinaimg.cn/large/008i3skNgy1gyk9f1bvjrj30u00ufwgu.jpg)
 
-```yaml
-# config/esa.yaml
+```
+# .env.local
 
-parameters:
-  # ...
-
-  esa.webhook_secret: {シークレット}
-
-  # または、シークレットなしの場合は
-  esa.webhook_secret: ~
+ESA_WEBHOOK_SECRET={シークレット} # シークレットなしの場合は設定不要
 ```
 
 #### `/webhook` へのアクセスの解放
@@ -194,4 +170,46 @@ parameters:
 <LocationMatch ^/(index.php|webhook?)$>
     Require all granted
 </LocationMatch>
+```
+
+## 開発
+
+### ローカルサーバー起動
+
+```bash
+$ php -S localhost:8000 -t public
+# or if symfony-cli is installed
+$ symfony serve
+```
+
+ブラウザで `http://localhost:8000/post/:post_number` へアクセス。
+
+### webpackによる独自アセットのビルド
+
+esabaはscss/webpackに対応しています。
+
+`./assets/post/user/{エントリー名}.(scss|js)` に独自アセットを配置し、
+
+```bash
+$ yarn build
+# or
+$ npm run build
+```
+
+を実行すると、以下のように `build/{エントリー名}.(css|js)` というパスで利用できるようになります。
+
+```php
+<?php
+// config/esaba.php
+
+return json_encode([
+    // ...
+
+    'ESABA_USER_ASSETS' => json_encode([
+        'path/to/category' => [
+            'css' => 'build/your-own.css',
+            'js' => 'build/your-own.js',
+        ],
+    ]),
+]);
 ```

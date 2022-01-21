@@ -5,7 +5,7 @@ node_modules
 package-lock.json
 yarn.lock
 build
-config/esa.yaml
+config/esaba.php
 
 ###> symfony/framework-bundle ###
 /.env.local
