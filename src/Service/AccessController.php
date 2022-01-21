@@ -23,7 +23,7 @@ class AccessController
         return empty($this->publicCategories) || $this->matchesPublicConditions($category, $tags);
     }
 
-    private function matchesPublicConditions(string $category, array $tags): bool
+    private function matchesPublicConditions(?string $category, array $tags): bool
     {
         return $this->categoryIsUnderOneOf($category, $this->publicCategories) || $this->atLeastOneTagIsIn($tags, $this->publicTags);
     }
@@ -36,7 +36,7 @@ class AccessController
     private function categoryIsUnderOneOf(?string $needle, array $haystacks): bool
     {
         foreach ($haystacks as $haystack) {
-            if (preg_match(sprintf('#^%s#', $haystack), $needle)) {
+            if (preg_match(sprintf('#^%s#', $haystack), (string) $needle)) {
                 return true;
             }
         }
