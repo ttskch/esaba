@@ -1,5 +1,5 @@
 /vendor/
-composer.lock
+#composer.lock # add to git for heroku
 /components/
 node_modules
 package-lock.json

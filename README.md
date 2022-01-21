@@ -47,6 +47,10 @@ $ vi .env.local # tailor to your env
 # and serve under ./public with your web server
 ```
 
+### Herokuへのデプロイ
+
+[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/ttskch/esaba)
+
 ## 使い方
 
 ### 設定

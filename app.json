@@ -1,0 +1,50 @@
+{
+  "buildpacks": [
+    {
+      "url": "heroku/nodejs"
+    },
+    {
+      "url": "heroku/php"
+    }
+  ],
+  "env": {
+    "APP_ENV": "prod",
+    "APP_SECRET": {
+      "generator": "secret"
+    },
+    "ESA_TEAM_NAME": {
+      "description": "esa team name"
+    },
+    "ESA_ACCESS_TOKEN": {
+      "description": "esa access token"
+    },
+    "ESA_WEBHOOK_SECRET": {
+      "description": "esa webhook secret",
+      "required": false
+    },
+    "ESABA_PUBLIC_CATEGORIES": {
+      "description": "public categories list as json string",
+      "required": false
+    },
+    "ESABA_PUBLIC_TAGS": {
+      "description": "public tags list as json string",
+      "required": false
+    },
+    "ESABA_PRIVATE_CATEGORIES": {
+      "description": "private categories list as json string",
+      "required": false
+    },
+    "ESABA_PRIVATE_TAGS": {
+      "description": "private tags list as json string",
+      "required": false
+    },
+    "ESABA_HTML_REPLACEMENTS": {
+      "description": "html replacements list as json string like {\"/regex pattern/\": \"replacement\"}",
+      "required": false
+    },
+    "ESABA_USER_ASSETS": {
+      "description": "user asset configs list as json string like {\"path/to/category\": {\"css\": \"css/your-own.css\", \"js\": \"js/your-own.js\"}, \"#tag_name\": {\"css\": \"css/your-own.css\"}}",
+      "required": false
+    }
+  }
+}
