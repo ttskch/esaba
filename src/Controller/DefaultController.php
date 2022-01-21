@@ -56,7 +56,7 @@ class DefaultController extends AbstractController
         // fix body_html
         $htmlHandler
             ->initialize($post['body_html'])
-            ->replacePostUrls('post', 'id')
+            ->replacePostUrls('default_post', 'id')
             ->disableMentionLinks()
             ->replaceEmojiCodes()
             ->replaceHtml($htmlReplacements)

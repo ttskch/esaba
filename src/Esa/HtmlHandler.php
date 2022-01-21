@@ -178,7 +178,7 @@ class HtmlHandler
             $anchorHash = isset($matches[$backReferenceNumberForAnchorHash]) ? $matches[$backReferenceNumberForAnchorHash] : '';
 
             $pattern = sprintf('/href=(\'|")%s\1/', str_replace('/', '\/', $href));
-            $replacement = sprintf('href="%s%s"', $that->urlGenerator->generate($routeName, [$routeVariableName => $postId]), $anchorHash);
+            $replacement = sprintf('href="%s%s"', $that->urlGenerator->generate($routeName, [$routeVariableName => (int) $postId]), $anchorHash);
 
             return [
                 'pattern' => $pattern,
