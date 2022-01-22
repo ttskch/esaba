@@ -22,7 +22,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/', name: 'default_')]
 final class DefaultController extends AbstractController
 {
-    #[Route('/', name: 'index', methods: ['get'])]
+    #[Route('/', name: 'index', methods: ['GET'])]
     public function index(Request $request): Response
     {
         if ($postId = $request->query->get('post_id')) {
@@ -32,7 +32,7 @@ final class DefaultController extends AbstractController
         return $this->render('default/index.html.twig');
     }
 
-    #[Route('/post/{id}', name: 'post', requirements: ['id' => '\d+'], methods: ['get'])]
+    #[Route('/post/{id}', name: 'post', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function post(
         Request $request,
         int $id,
