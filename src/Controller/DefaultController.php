@@ -9,6 +9,7 @@ use App\Esa\Proxy;
 use App\Esa\WebhookValidator;
 use App\Service\AccessController;
 use App\Service\AssetResolver;
+use JsonException;
 use Polidog\Esa\Exception\ClientException;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,19 +20,19 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/', name: 'default_')]
-class DefaultController extends AbstractController
+final class DefaultController extends AbstractController
 {
-    #[Route('/', name: 'index')]
+    #[Route('/', name: 'index', methods: ['get'])]
     public function index(Request $request): Response
     {
-        if ($postId = $request->get('post_id')) {
+        if ($postId = $request->query->get('post_id')) {
             return $this->redirectToRoute('default_post', ['id' => $postId]);
         }
 
         return $this->render('default/index.html.twig');
     }
 
-    #[Route('/post/{id}', name: 'post', requirements: ['id' => '\d+'])]
+    #[Route('/post/{id}', name: 'post', requirements: ['id' => '\d+'], methods: ['get'])]
     public function post(
         Request $request,
         int $id,
@@ -41,12 +42,12 @@ class DefaultController extends AbstractController
         AssetResolver $assetResolver,
         array $htmlReplacements,
     ): Response {
-        $force = boolval($request->get('force', 0));
+        $force = $request->query->getBoolean('force');
 
         try {
             $post = $esa->getPost($id, $force);
         } catch (ClientException $e) {
-            throw new NotFoundHttpException();
+            throw new NotFoundHttpException('', $e);
         }
 
         if (!$accessController->isPublic($post['category'], $post['tags'])) {
@@ -79,6 +80,9 @@ class DefaultController extends AbstractController
         ]);
     }
 
+    /**
+     * @throws JsonException
+     */
     #[Route('/webhook', name: 'webhook', methods: ['POST'])]
     public function webhook(
         Request $request,
@@ -93,7 +97,7 @@ class DefaultController extends AbstractController
             throw new NotFoundHttpException();
         }
 
-        $body = json_decode($request->getContent(), true);
+        $body = json_decode($request->getContent(), true, 512, JSON_THROW_ON_ERROR);
 
         switch ($body['kind']) {
             case 'post_create':

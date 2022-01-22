@@ -18,7 +18,7 @@ class AssetResolver
         $this->tagBasedConfig = [];
 
         foreach ((array) $config as $key => $value) {
-            if (0 === strpos($key, '#')) {
+            if (str_starts_with($key, '#')) {
                 $this->tagBasedConfig[$key] = $value;
             } else {
                 $this->categoryBasedConfig[$key] = $value;
