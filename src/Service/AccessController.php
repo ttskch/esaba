@@ -20,12 +20,24 @@ class AccessController
             return false;
         }
 
-        return empty($this->publicCategories) || $this->matchesPublicConditions($category, $tags);
+        return $this->matchesPublicConditions($category, $tags);
     }
 
     private function matchesPublicConditions(?string $category, array $tags): bool
     {
-        return $this->categoryIsUnderOneOf($category, $this->publicCategories) || $this->atLeastOneTagIsIn($tags, $this->publicTags);
+        if (empty($this->publicCategories) && empty($this->publicTags)) {
+            return true;
+        }
+
+        if ($this->categoryIsUnderOneOf($category, $this->publicCategories)) {
+            return true;
+        }
+
+        if ($this->atLeastOneTagIsIn($tags, $this->publicTags)) {
+            return true;
+        }
+
+        return false;
     }
 
     private function matchesPrivateConditions(?string $category, array $tags): bool

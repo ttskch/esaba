@@ -34,15 +34,15 @@ class AccessControllerTest extends TestCase
     public function isPublicDataProvider(): array
     {
         return [
-            ['a/b',     [],               true],
-            ['a/b/c',   [],               false],
-            ['c/d',     [],               false],
-            ['a/b/c/d', [],               false],
+            ['a/b',     [],                true],
+            ['a/b/c',   [],                false],
+            ['c/d',     [],                false],
+            ['a/b/c/d', [],                false],
             ['unknown', ['tag1', 'tag99'], true],
-            ['unknown', ['tag1', 'tag3'], false],
-            ['a/b',     ['tag4'],         false],
-            ['a/b/c',   ['tag2'],         false],
-            ['a/b/c/d', ['tag2'],         false],
+            ['unknown', ['tag1', 'tag3'],  false],
+            ['a/b',     ['tag4'],          false],
+            ['a/b/c',   ['tag2'],          false],
+            ['a/b/c/d', ['tag2'],          false],
         ];
     }
 
@@ -55,8 +55,8 @@ class AccessControllerTest extends TestCase
             ['tag3', 'tag4']  // private tags
         );
 
-        $this->assertTrue($this->SUT->isPublic('a/n/y', []));
         $this->assertTrue($this->SUT->isPublic('a/n/y', ['tag1']));
+        $this->assertFalse($this->SUT->isPublic('a/n/y', []));
         $this->assertFalse($this->SUT->isPublic('a/n/y', ['tag3']));
         $this->assertFalse($this->SUT->isPublic('a/n/y', ['tag1', 'tag3']));
 
@@ -67,8 +67,22 @@ class AccessControllerTest extends TestCase
             ['tag3', 'tag4']  // private tags
         );
 
+        $this->assertTrue($this->SUT->isPublic('a/b', ['any1', 'any2']));
+        $this->assertTrue($this->SUT->isPublic('a/b', []));
         $this->assertFalse($this->SUT->isPublic('unknown', ['any1', 'any2']));
         $this->assertFalse($this->SUT->isPublic('unknown', ['any1', 'tag3']));
+
+        $this->SUT = new AccessController(
+            [],               // public categories
+            [],               // public tags
+            ['a/b/c', 'x/y'], // private categories
+            ['tag3', 'tag4']  // private tags
+        );
+
+        $this->assertTrue($this->SUT->isPublic('a/n/y', ['any1']));
+        $this->assertTrue($this->SUT->isPublic('a/n/y', []));
+        $this->assertFalse($this->SUT->isPublic('a/n/y', ['tag3']));
+        $this->assertFalse($this->SUT->isPublic('a/n/y', ['any1', 'tag3']));
     }
 
     public function testMatchesPublicConditions(): void
