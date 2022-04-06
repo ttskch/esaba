@@ -20,6 +20,10 @@ class HtmlHandler
 
     public function initialize(string $html): self
     {
+        if (!$html) {
+            $html = '<div></div>';
+        }
+
         $this->crawler->clear();
         $this->crawler->addHtmlContent($html);
 
