@@ -49,7 +49,16 @@ $ vi .env.local # tailor to your env
 
 ### Herokuへのデプロイ
 
-[![Deploy to Heroku](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/ttskch/esaba)
+本リポジトリをフォークするか（デプロイ先が公開されてしまってよい場合）、以下の手順にて本リポジトリのコードベースをprivateリポジトリにコピーしてください。
+
+```bash
+$ git clone git@github.com:ttskch/esaba.git
+$ cd esaba
+$ git remote set-url origin git@github.com:{user}/{repo}.git # privateリポジトリのURLをセット
+$ git push
+```
+
+その上で、 `https://heroku.com/deploy?template=https://github.com/{user}/{repo}` をブラウザで開くとHerokuにデプロイできます。
 
 <img src="https://tva1.sinaimg.cn/large/008i3skNgy1gylaf67zcuj30u02afdih.jpg" width="500">
 
